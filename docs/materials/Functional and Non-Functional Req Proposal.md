@@ -162,3 +162,93 @@ The goal of the UAT is to validate the functionality, usability, and reliability
 2. Apply filters based on specific criteria (e.g., equipment type, date).
 
 **Expected Results**: The visualization updates to reflect only the filtered data, removing nodes that don't meet the criteria.
+
+# 9 User story
+- Visualize Equipment Reference Data for ISO 15926-4
+| User Story(General User) | Acceptance Criteria |
+| --- | --- |
+| As a member of the ISO TC 184 SC4 committee, I want to efficiently search and visualize equipment reference data, so that I can quickly understand and analyze hierarchical data relationships without manual searching. | •  Users can interact with the visualization by zooming, panning, and clicking on nodes to view details.
+•  The visualization accurately represents the hierarchical relationships in the queried data. |
+- Efficiently Filter Equipment Reference Data
+
+| User Story(General User) | Acceptance Criteria |
+| --- | --- |
+| As a member of the ISO TC 184 SC4 committee, I want to filter the equipment reference data based on specific criteria, so that I can focus on the most relevant information and analyze specific aspects of the data hierarchy efficiently. | •  Users can access a filter panel from the main visualization interface.
+•  Users can apply multiple filters simultaneously, with options to filter by attributes such as equipment type, manufacturer, date, or location. |
+
+# 10 User Interface
+- **General -** Filter Panel Layout
+| User Story | Acceptance Criteria |
+| --- | --- |
+| As a user, I want to view a user- friendly dashboard without logging in, providing a clear overview of available features and options. | •  The Panel presents an organized layout with clear labels for available features.
+ |
+- **Efficient Navigation**
+| User Story | Acceptance Criteria |
+| --- | --- |
+| As a member of the ISO TC 184 SC4 committee, I want a user-friendly interface to apply filters to the equipment reference data so that I can easily customize the data view according to my specific needs and preferences. | •  The filter panel is prominently accessible from the main visualization interface.
+•  Users can select filters via dropdowns, checkboxes, a date range picker, and a search bar. |
+- **Clear Error Messages**
+| User Story | Acceptance Criteria |
+| --- | --- |
+| 
+As a user, I want the application to display clear and informative error messages. | •  Error messages are clear, concise, and provide guidance for resolution.
+•  Users can troubleshoot issues effectively.
+•  Clean error widget appears up the top. |
+
+# **11 User Experience (UX) - user stories**
+| User Story | Acceptance Criteria |
+| --- | --- |
+| 
+As a user, I want to see an- swers in comprehensive English sentences for better understand- ing. | •  The application generates coherent and contextually rele- vant English sentences as answers.
+•  The answers incorporate the extracted data from documents in a structured manner. |
+| User Story | Acceptance Criteria |
+| 
+ 
+ 
+ 
+As a user, I want the ability to access the source document(s) directly from the application’s answers. | •  Each generated answer includes a clickable hyperlink to the specific source document(s) that the information was ex- tracted from.
+•  Clicking on the hyperlink opens the corresponding document in a new browser window or tab.
+•  The hyperlink text provides context, such as the document title or relevant keywords, to indicate the content of the linked document.
+•  The linked documents open securely, ensuring user privacy and data protection. |
+| User Story | Acceptance Criteria |
+| 
+As a user, I want the applica- tion’s interface to work well on both desktop and mobile devices. | •  The interface adapts seamlessly to various devices, ensuring consistent usability.
+•  Users can access and interact with the app on mobile and desktop. |
+
+# **12 Data Processing Data Storage**
+
+| User Story | Acceptance Criteria |
+| --- | --- |
+| 
+As a user, I want the ability to access the source document(s) directly from the application’s answers. | •  The system processes queries from the SPARQL endpoint efficiently, with minimal delay.
+•  Data processing tasks do not exceed predefined time thresholds, ensuring real-time interaction. |
+
+# **13 Skills and Resources Audit**
+- **Project Requirement Analysis**
+- **Backend Development:** Python
+- **Frontend Development: React  application development.**
+- **Deployment: AWS**
+- **Skills Inventory**
+- Programming languages (Python, Java, etc.)
+- API development and integration
+- Database management (SQL, NoSQL)
+- SPARQL endpoint integration
+
+### **Current Skills Inventory:**
+- Team member: Strong proficiency in Python and API development.
+- Team member: Experienced in database management and optimization.
+
+### **Resource Availability:**
+- Access to development environments and tools (e.g., IDEs, version control systems).
+- Access to the SPARQL endpoint for integration testing.
+
+### **Gaps Identified:**
+- Limited experience in SPARQL and RDF data handling.
+- Need for additional resources for database optimization.
+
+# **14 Action Plan**
+
+### **Action Plan:**
+- **Communication:** Organize workshops and training sessions for team members to address identified skill gaps.
+- **Learning:** Consider additional resources with expertise in SPARQL, data visualization, and Kubernetes.
+- **Coding**
