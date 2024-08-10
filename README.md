@@ -36,12 +36,12 @@ TO RUN THE STREAMLIT CODE:
 Install the related packages using:
 
 
-pip install streamlit networkx pyvis pandas
+- pip install streamlit networkx pyvis pandas
 
 Run the Streamlit App:
 Open a terminal or command prompt, navigate to the directory where your app.py file is located, and run the Streamlit app with the following command.
 
-streamlit run app.py
+- streamlit run app.py
 
 
 
