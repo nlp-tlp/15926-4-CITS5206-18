@@ -1,5 +1,5 @@
 # 15926-4-CITS5206-18
-
+```
 project-repo/
 │
 ├── docs/                   # Documentation and text documents
@@ -30,7 +30,7 @@ project-repo/
 │
 ├── .gitignore              # Git ignore file
 └── README.md               # Main project README
-
+```
 TO RUN THE STREAMLIT CODE:
 
 Install the related packages using:
