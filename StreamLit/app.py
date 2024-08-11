@@ -8,6 +8,18 @@ import tempfile
 # Load the dataset
 data = pd.read_csv('final_rotating_equipment_data.csv')
 
+# Create the sidebar for search bars
+st.sidebar.header("Search Options")
+
+# First search bar: Search by unique name
+search_term = st.sidebar.text_input("Search by Unique Name")
+
+# Second search bar: Number of parent nodes to display
+parent_limit = st.sidebar.number_input("Number of Parent Nodes", min_value=0, max_value=10, value=3, step=1)
+
+# Third search bar: Number of children nodes to display
+children_limit = st.sidebar.number_input("Number of Children Nodes", min_value=0, max_value=10, value=3, step=1)
+
 # Create a graph
 G = nx.Graph()
 
@@ -26,14 +38,20 @@ for index, row in data.iterrows():
             G.add_node(superclass)
             G.add_edge(unique_name, superclass)
 
-# Search bar for filtering nodes
-search_term = st.text_input("Search for a Unique Name")
-
 # Filter the graph if search term is provided
 if search_term:
     if search_term in G:
-        # Create a subgraph with the selected node and its neighbors
-        sub_graph = G.subgraph([search_term] + list(G.neighbors(search_term)))
+        # Get parent nodes (ancestors) up to the specified limit
+        parent_nodes = list(nx.ancestors(G, search_term))[:parent_limit]
+        
+        # Get child nodes (descendants) up to the specified limit
+        child_nodes = list(nx.descendants(G, search_term))[:children_limit]
+
+        # Include neighbors (directly connected nodes)
+        neighbors = list(G.neighbors(search_term))
+
+        # Create a subgraph with the selected node, its parents, and its children
+        sub_graph = G.subgraph([search_term] + parent_nodes + child_nodes + neighbors).copy()
     else:
         sub_graph = nx.Graph()  # Empty graph if no match
 else:
