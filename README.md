@@ -1,6 +1,6 @@
 # 15926-4-CITS5206-18
 
-##REPO STRUCTURE
+## REPO STRUCTURE
 ```
 project-repo/
 │
