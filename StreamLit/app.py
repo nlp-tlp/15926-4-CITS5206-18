@@ -5,8 +5,8 @@ from pyvis.network import Network
 import streamlit.components.v1 as components
 import tempfile
 
-# Load the dataset
-data = pd.read_csv('final_rotating_equipment_data.csv')
+# Load the new dataset
+data = pd.read_csv('Functional Database 2-level.csv')
 
 # Create the sidebar for search bars
 st.sidebar.header("Search Options")
@@ -23,20 +23,40 @@ children_limit = st.sidebar.number_input("Number of Children Nodes", min_value=0
 # Create a graph
 G = nx.Graph()
 
-# Add nodes and edges, including the TextDefinition in the node's title (which is shown as a tooltip)
+# Add nodes and edges, including the description in the node's title (which is shown as a tooltip)
 for index, row in data.iterrows():
-    unique_name = row['UniqueName']
-    superclasses = row['SuperClass'].split(', ')
-    text_definition = row['TextDefinition']
+    unique_name = row['uniqueName']
     
-    # Add node to the graph with the TextDefinition as a tooltip
-    G.add_node(unique_name, title=text_definition)  
+    # Handle potential NaN values in the superclasses and subclasses columns
+    superclasses = row['superclasses']
+    if isinstance(superclasses, str):
+        superclasses = superclasses.split(', ')
+    else:
+        superclasses = []
+    
+    subclasses = row['subclasses']
+    if isinstance(subclasses, str):
+        subclasses = subclasses.split(', ')
+    else:
+        subclasses = []
+
+    # Ensure description is always a string
+    description = str(row['description']) if not pd.isna(row['description']) else ""
+
+    # Add node to the graph with the description as a tooltip
+    G.add_node(unique_name, title=description)  
     
     # Add edges for superclasses
     for superclass in superclasses:
         if superclass:
             G.add_node(superclass)
             G.add_edge(unique_name, superclass)
+    
+    # Add edges for subclasses
+    for subclass in subclasses:
+        if subclass:
+            G.add_node(subclass)
+            G.add_edge(unique_name, subclass)
 
 # Filter the graph if search term is provided
 if search_term:
