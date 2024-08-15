@@ -1,6 +1,8 @@
 import pandas as pd
 from SPARQLWrapper import SPARQLWrapper, JSON
-
+# Function to replace HTML entities in descriptions
+def replace_html_entities(text):
+    return text.replace('&lt;', '<').replace('&gt;', '>')
 # Define SPARQL endpoint and query
 sparql = SPARQLWrapper("http://190.92.134.58:8890/sparql")
 sparql.setQuery("""
@@ -47,13 +49,13 @@ data = {}
 
 for result in results["results"]["bindings"]:
     unique_name = result["uniqueName"]["value"]
-    description = result.get("description", {}).get("value", "")
+    description = replace_html_entities(result.get("description", {}).get("value", ""))
     
     child_class = result.get("childClassName", {}).get("value", "")
-    child_description = result.get("childDescription", {}).get("value", "")
+    child_description = replace_html_entities(result.get("childDescription", {}).get("value", ""))
     
     child_super_classes = result.get("childSuperClasses", {}).get("value", "")
-    child_superclass_description = result.get("childSuperClassDescription", {}).get("value", "")
+    child_superclass_description = replace_html_entities(result.get("childSuperClassDescription", {}).get("value", ""))
 
     # Initialize unique_name in data if not already present
     if unique_name not in data:
