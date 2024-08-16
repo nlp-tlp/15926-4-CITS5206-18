@@ -1,5 +1,7 @@
 # 15926-4-CITS5206-18
 
+## REPO STRUCTURE
+```
 project-repo/
 │
 ├── docs/                   # Documentation and text documents
@@ -30,3 +32,18 @@ project-repo/
 │
 ├── .gitignore              # Git ignore file
 └── README.md               # Main project README
+```
+## TO RUN THE STREAMLIT CODE:
+
+### Install the related packages using:
+
+
+``` pip install streamlit networkx pyvis pandas```
+
+### Run the Streamlit App:
+Open a terminal or command prompt, navigate to the directory where your app.py file is located, and run the Streamlit app with the following command.
+
+```streamlit run app.py```
+
+
+
