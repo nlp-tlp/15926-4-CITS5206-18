@@ -6,13 +6,14 @@ import streamlit.components.v1 as components
 import tempfile
 
 # Load the new dataset
-data = pd.read_csv('Functional Database 2-level.csv')
+data = pd.read_csv('Functional Database 2-level-2.csv')
 
 # Create the sidebar for search bars
 st.sidebar.header("Search Options")
 
-# First search bar: Search by unique name
-search_term = st.sidebar.text_input("Search by Unique Name")
+# First search bar: Search by unique name with auto-fill
+unique_names = data['uniqueName'].tolist()
+search_term = st.sidebar.selectbox("Search by Unique Name", unique_names)
 
 # Second search bar: Number of parent nodes to display
 parent_limit = st.sidebar.number_input("Number of Parent Nodes", min_value=0, max_value=10, value=3, step=1)
@@ -46,17 +47,17 @@ for index, row in data.iterrows():
     # Add node to the graph with the description as a tooltip
     G.add_node(unique_name, title=description)  
     
-    # Add edges for superclasses
+    # Add edges for superclasses (reversing the direction)
     for superclass in superclasses:
         if superclass:
             G.add_node(superclass)
-            G.add_edge(superclass, unique_name)
+            G.add_edge(unique_name, superclass)  # Reverse direction
     
-    # Add edges for subclasses
+    # Add edges for subclasses (reversing the direction)
     for subclass in subclasses:
         if subclass:
             G.add_node(subclass)
-            G.add_edge(unique_name, subclass)
+            G.add_edge(subclass, unique_name)  # Reverse direction
 
 # Initialize the network graph visualization
 net = Network(height="750px", width="100%", bgcolor="#222222", font_color="white", directed=True)
@@ -103,6 +104,8 @@ if search_term and search_term in G:
             net.get_node(node)["color"] = "green"  # Color for parent nodes
         elif node in child_nodes:
             net.get_node(node)["color"] = "blue"  # Color for child nodes
+        else:
+            net.get_node(node)["color"] = "white"  # Default color for other nodes
 
 else:
     # If no search term is provided or the search term is not found, visualize the entire graph
@@ -113,8 +116,42 @@ for node in net.nodes:
     if 'title' in node:
         node["title"] = f"{node['title']}"
 
-# Use a temporary file to avoid file write issues
+# Save the graph to a temporary file
 with tempfile.NamedTemporaryFile(delete=False, suffix=".html") as tmp_file:
     net.save_graph(tmp_file.name)
     tmp_file.seek(0)
     components.html(tmp_file.read().decode(), height=750)
+
+# Sidebar handling for node clicks
+clicked_node = st.empty()  # Placeholder for clicked node description
+node_title = st.empty()  # Placeholder for clicked node title
+
+if st.session_state.get('clicked_node'):
+    clicked_node = st.session_state['clicked_node']
+    description = G.nodes[clicked_node].get('title', 'No description available.')
+    node_title.markdown(f"**{clicked_node}**")
+    st.sidebar.write(description)
+
+# JavaScript to handle node clicks and update Streamlit input
+components.html("""
+<script>
+function nodeClick(node_id) {
+    const nodeInput = window.parent.document.querySelector("input[placeholder='Clicked Node']");
+    nodeInput.value = node_id;
+    nodeInput.dispatchEvent(new Event('input', { bubbles: true }));
+    window.parent.postMessage({type: 'nodeClick', node_id: node_id}, '*');
+}
+</script>
+""", height=0)
+
+# Handle messages from the embedded HTML/JavaScript
+components.html("""
+<script>
+window.addEventListener("message", (event) => {
+    if (event.data.type === "nodeClick") {
+        const clickedNode = event.data.node_id;
+        window.parent.document.querySelector("[data-testid='stSidebar']").click();
+    }
+});
+</script>
+""", height=0)
