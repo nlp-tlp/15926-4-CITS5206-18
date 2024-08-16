@@ -111,7 +111,7 @@ else:
 # Adjust the height of the description box to accommodate the full text
 for node in net.nodes:
     if 'title' in node:
-        node["title"] = f"<div style='height: 200px; width: 200px;'>{node['title']}</div>"
+        node["title"] = f"{node['title']}"
 
 # Use a temporary file to avoid file write issues
 with tempfile.NamedTemporaryFile(delete=False, suffix=".html") as tmp_file:
