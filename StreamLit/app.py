@@ -134,7 +134,7 @@ if st.session_state.get('clicked_node'):
 
 # JavaScript to handle node clicks and update Streamlit input
 components.html("""
-<script>
+<script type="text/javascript">
 function nodeClick(node_id) {
     const nodeInput = window.parent.document.querySelector("input[placeholder='Clicked Node']");
     nodeInput.value = node_id;
@@ -146,7 +146,7 @@ function nodeClick(node_id) {
 
 # Handle messages from the embedded HTML/JavaScript
 components.html("""
-<script>
+<script type="text/javascript">
 window.addEventListener("message", (event) => {
     if (event.data.type === "nodeClick") {
         const clickedNode = event.data.node_id;
