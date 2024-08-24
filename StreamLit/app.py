@@ -4,9 +4,14 @@ import networkx as nx
 from pyvis.network import Network
 import streamlit.components.v1 as components
 import tempfile
+from networkx.readwrite import json_graph
+import json
+
+# Set the page layout to wide
+st.set_page_config(layout="wide")
 
 # Load the new dataset
-data = pd.read_csv('Functional Database 2-level-2.csv')
+data = pd.read_csv('Functional Database 2-level.csv')
 
 # Create the sidebar for search bars
 st.sidebar.header("Search Options")
@@ -60,7 +65,7 @@ for index, row in data.iterrows():
             G.add_edge(subclass, unique_name)  # Reverse direction
 
 # Initialize the network graph visualization
-net = Network(height="750px", width="100%", bgcolor="#222222", font_color="white", directed=True)
+net = Network(height="1000px", width="100%", bgcolor="#222222", font_color="white", directed=True)
 
 # Filter the graph if a search term is provided
 if search_term and search_term in G:
@@ -112,46 +117,67 @@ else:
     net.from_nx(G)
 
 # Adjust the height of the description box to accommodate the full text
-for node in net.nodes:
-    if 'title' in node:
-        node["title"] = f"{node['title']}"
-
 # Save the graph to a temporary file
 with tempfile.NamedTemporaryFile(delete=False, suffix=".html") as tmp_file:
     net.save_graph(tmp_file.name)
     tmp_file.seek(0)
-    components.html(tmp_file.read().decode(), height=750)
+    graph_html = tmp_file.read().decode()
 
-# Sidebar handling for node clicks
-clicked_node = st.empty()  # Placeholder for clicked node description
-node_title = st.empty()  # Placeholder for clicked node title
+# Convert the graph to a JSON serializable format
+graph_data = json_graph.node_link_data(G)
 
-if st.session_state.get('clicked_node'):
-    clicked_node = st.session_state['clicked_node']
-    description = G.nodes[clicked_node].get('title', 'No description available.')
-    node_title.markdown(f"**{clicked_node}**")
-    st.sidebar.write(description)
+# Serialize the graph to JSON
+graph_json = json.dumps(graph_data)
 
-# JavaScript to handle node clicks and update Streamlit input
-components.html("""
-<script type="text/javascript">
-function nodeClick(node_id) {
-    const nodeInput = window.parent.document.querySelector("input[placeholder='Clicked Node']");
-    nodeInput.value = node_id;
-    nodeInput.dispatchEvent(new Event('input', { bubbles: true }));
-    window.parent.postMessage({type: 'nodeClick', node_id: node_id}, '*');
-}
-</script>
-""", height=0)
+# Sidebar for displaying node descriptions
+with st.sidebar:
+    # Add a div for the floating bar in the sidebar
+    st.markdown("""
+        <div id="sidebarFloatingBar" style="
+            background-color: #fff;
+            color: black;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;">
+        </div>
+        """, unsafe_allow_html=True)
 
-# Handle messages from the embedded HTML/JavaScript
-components.html("""
-<script type="text/javascript">
-window.addEventListener("message", (event) => {
-    if (event.data.type === "nodeClick") {
-        const clickedNode = event.data.node_id;
-        window.parent.document.querySelector("[data-testid='stSidebar']").click();
-    }
-});
-</script>
-""", height=0)
+# JavaScript to handle node clicks using vis.js
+components.html(f"""
+    {graph_html}  <!-- Embed the PyVis graph -->
+    <script type="text/javascript">
+        // Parse the graph JSON data
+        const graphData = {graph_json};
+
+        // Function to escape HTML content
+        function escapeHtml(content) {{
+            const div = document.createElement('div');
+            div.textContent = content;
+            return div.innerHTML;
+        }}
+
+        // Function to handle node clicks
+        function nodeClick(nodeId) {{
+            //Find the node object in graphData using the nodeId
+            const node = graphData.nodes.find(n => n.id === nodeId);
+            
+            // Display the node's title in the alert, fallback to nodeId if title is not available
+            const nodeTitle = node && node.title ? node.title : nodeId;
+            
+            const floatingBar = window.parent.document.getElementById('sidebarFloatingBar');
+            floatingBar.innerHTML =  escapeHtml(nodeTitle);
+            floatingBar.style.display = 'block';
+
+        }}
+
+        // Ensure the network instance is properly accessed
+        var network = window.network;  // Access the network directly
+        network.on("click", function(params) {{
+            if (params.nodes.length > 0) {{
+                var nodeId = params.nodes[0];
+                nodeClick(nodeId);
+            }}
+        }});
+    </script>
+
+""", height=1000)
