@@ -18,11 +18,49 @@ unique_names = [item["uniqueName"] for item in data]
 # First search bar: Search by unique name with auto-fill
 search_term = st.sidebar.selectbox("Search by Unique Name", unique_names)
 
-# Second search bar: Number of parent nodes to display
-parent_limit = st.sidebar.number_input("Number of Parent Nodes", min_value=0, max_value=10, value=3, step=1)
+# Second search bar: Number of parent levels to display
+parent_limit = st.sidebar.number_input("Number of Parent Levels", min_value=0, max_value=10, value=2, step=1)
 
-# Third search bar: Number of children nodes to display
-children_limit = st.sidebar.number_input("Number of Children Nodes", min_value=0, max_value=10, value=3, step=1)
+# Third search bar: Number of children levels to display
+children_limit = st.sidebar.number_input("Number of Children Levels", min_value=0, max_value=10, value=2, step=1)
+
+# Define a function to assign colors based on the level
+def get_color_by_level(level):
+    colors = [
+        "#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd",
+        "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"
+    ]
+    return colors[level % len(colors)]
+
+# Function to find parent nodes up to a certain level
+def find_parents(node_name, level, data, current_level=1):
+    if level == 0:
+        return []
+    parents = []
+    for item in data:
+        if node_name in item["subclasses"].split(", "):
+            parents.append({
+                "name": item["uniqueName"],
+                "children": find_parents(item["uniqueName"], level - 1, data, current_level + 1),
+                "color": get_color_by_level(current_level),
+                "description": item["description"]
+            })
+    return parents
+
+# Function to find child nodes up to a certain level
+def find_children(node_name, level, data, current_level=1):
+    if level == 0:
+        return []
+    children = []
+    for item in data:
+        if node_name in item["superclasses"].split(", "):
+            children.append({
+                "name": item["uniqueName"],
+                "children": find_children(item["uniqueName"], level - 1, data, current_level + 1),
+                "color": get_color_by_level(current_level),
+                "description": item["description"]
+            })
+    return children
 
 # Generate a filtered dataset based on the search term
 filtered_data = [item for item in data if item["uniqueName"] == search_term][0]
@@ -33,21 +71,31 @@ hierarchical_data = {
     "children": [
         {
             "name": "Superclasses",
-            "children": [{"name": superclass, "color": "green", "description": filtered_data["description"]} for superclass in filtered_data["superclasses"].split(", ") if superclass]
+            "children": find_parents(filtered_data["uniqueName"], parent_limit, data)
         },
         {
             "name": "Subclasses",
-            "children": [{"name": subclass, "color": "blue", "description": filtered_data["description"]} for subclass in filtered_data["subclasses"].split(", ") if subclass]
+            "children": find_children(filtered_data["uniqueName"], children_limit, data)
         }
     ],
-    "color": "red",
+    "color": "red",  # The searched node remains red
     "description": filtered_data["description"]
 }
 
 # Convert hierarchical data to JSON format
 hierarchical_data_json = json.dumps(hierarchical_data)
 
-# Display the D3.js graph with node descriptions on click, arrows on links, curved lines, and a popup animation on hover
+# Calculate the height and width dynamically based on the depth and number of nodes
+num_nodes = len(hierarchical_data['children'][0]['children']) + len(hierarchical_data['children'][1]['children']) + 1
+max_depth = max(parent_limit, children_limit)
+width = num_nodes * 250  # Increase spacing between nodes horizontally
+height = max_depth * 250  # Increase spacing between nodes vertically
+
+# Ensure a minimum size
+width = max(width, 1000)
+height = max(height, 800)
+
+# Display the D3.js graph with node descriptions on click, arrows on links, curved lines, a popup animation on hover, and panning/zooming
 components.html(
     """
     <div id="d3-container" style="height: 1000px;"></div>
@@ -55,8 +103,8 @@ components.html(
     <script>
         const data = """ + hierarchical_data_json + """;
 
-        const width = 1000;
-        const height = 800;
+        const width = """ + str(width) + """;
+        const height = """ + str(height) + """;
 
         const treeLayout = d3.tree().size([height, width]);
 
@@ -67,6 +115,9 @@ components.html(
         const svg = d3.select("#d3-container").append("svg")
             .attr("width", width + 200)
             .attr("height", height + 200)
+            .call(d3.zoom().on("zoom", function(event) {
+                svg.attr("transform", event.transform);
+            }))
             .append("g")
             .attr("transform", "translate(100,100)");
 
@@ -144,7 +195,10 @@ components.html(
             .attr('text-anchor', 'start')
             .style("font-size", "14px")
             .style("fill", "white")
-            .text(d => d.data.name);
+            .style("overflow", "hidden")
+            .style("text-overflow", "ellipsis")
+            .style("max-width", "150px")  // Limit the width of text
+            .text(d => d.data.name.length > 20 ? d.data.name.slice(0, 20) + "..." : d.data.name);
     </script>
     """, 
     height=1000
