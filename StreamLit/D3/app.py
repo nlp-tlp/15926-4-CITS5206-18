@@ -88,12 +88,12 @@ hierarchical_data_json = json.dumps(hierarchical_data)
 # Calculate the height and width dynamically based on the depth and number of nodes
 num_nodes = len(hierarchical_data['children'][0]['children']) + len(hierarchical_data['children'][1]['children']) + 1
 max_depth = max(parent_limit, children_limit)
-width = num_nodes * 250  # Increase spacing between nodes horizontally
-height = max_depth * 250  # Increase spacing between nodes vertically
+width = num_nodes * 850  # Increase spacing between nodes horizontally
+height = max_depth * 10  # Increase spacing between nodes vertically
 
 # Ensure a minimum size
-width = max(width, 1000)
-height = max(height, 800)
+width = max(width, 1200)
+height = max(height, 1200)
 
 # Display the D3.js graph with node descriptions on click, arrows on links, curved lines, a popup animation on hover, and panning/zooming
 components.html(
@@ -113,7 +113,7 @@ components.html(
         treeLayout(root);
 
         const svg = d3.select("#d3-container").append("svg")
-            .attr("width", width + 200)
+            .attr("width", width + 300)  // Add extra space to the right for labels
             .attr("height", height + 200)
             .call(d3.zoom().on("zoom", function(event) {
                 svg.attr("transform", event.transform);
@@ -195,10 +195,8 @@ components.html(
             .attr('text-anchor', 'start')
             .style("font-size", "14px")
             .style("fill", "white")
-            .style("overflow", "hidden")
-            .style("text-overflow", "ellipsis")
-            .style("max-width", "150px")  // Limit the width of text
-            .text(d => d.data.name.length > 20 ? d.data.name.slice(0, 20) + "..." : d.data.name);
+            .style("overflow", "visible")  // Allow text to extend beyond its box
+            .text(d => d.data.name);
     </script>
     """, 
     height=1000
