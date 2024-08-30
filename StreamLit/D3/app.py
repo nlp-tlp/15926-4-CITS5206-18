@@ -22,7 +22,7 @@ search_term = st.sidebar.selectbox("Search by Unique Name", unique_names)
 parent_limit = st.sidebar.number_input("Number of Parent Levels", min_value=0, max_value=10, value=2, step=1)
 
 # Third search bar: Number of children levels to display
-children_limit = st.sidebar.number_input("Number of Children Levels", min_value=0, max_value=10, value=2, step=1)
+children_limit = st.sidebar.number_input("Number of Children Nodes", min_value=0, max_value=10, value=2, step=1)
 
 # Define a function to assign colors based on the level
 def get_color_by_level(level):
@@ -88,7 +88,7 @@ hierarchical_data_json = json.dumps(hierarchical_data)
 # Calculate the height and width dynamically based on the depth and number of nodes
 num_nodes = len(hierarchical_data['children'][0]['children']) + len(hierarchical_data['children'][1]['children']) + 1
 max_depth = max(parent_limit, children_limit)
-width = num_nodes * 850  # Increase spacing between nodes horizontally
+width = num_nodes * 250  # Increase spacing between nodes horizontally
 height = max_depth * 10  # Increase spacing between nodes vertically
 
 # Ensure a minimum size
@@ -100,6 +100,14 @@ components.html(
     """
     <div id="d3-container" style="height: 1000px;"></div>
     <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        .glow-text {
+            font-size: 14px;
+            font-family: Arial, sans-serif;
+            color: #00FF00;
+            text-shadow: 0 0 5px #00FF00, 0 0 10px #00FF00, 0 0 15px #00FF00;
+        }
+    </style>
     <script>
         const data = """ + hierarchical_data_json + """;
 
@@ -193,9 +201,7 @@ components.html(
             .attr('y', d => d.x + 5)
             .attr('dy', -10)
             .attr('text-anchor', 'start')
-            .style("font-size", "14px")
-            .style("fill", "white")
-            .style("overflow", "visible")  // Allow text to extend beyond its box
+            .attr('class', 'glow-text')  // Apply glowing text effect
             .text(d => d.data.name);
     </script>
     """, 
