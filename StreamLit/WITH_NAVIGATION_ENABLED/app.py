@@ -9,9 +9,71 @@ from networkx.readwrite import json_graph
 # Set the page layout to wide
 st.set_page_config(layout="wide")
 
+# Add custom CSS for positioning the logo and footer
+st.markdown(
+    """
+    <style>
+    /* Position the logo at the bottom right */
+    .logo-container {
+        position: fixed;
+        right: 10px;
+        bottom: 10px;
+        z-index: 100;
+    }
+    .logo-container img {
+        width: 150px;  /* Adjust size as needed */
+        opacity: 0.8;  /* Optional: adjust opacity */
+    }
+
+    /* Style for the footer */
+    .footer {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        background-color: #f1f1f1;
+        color: #000;
+        text-align: center;
+        padding: 10px 0;
+        z-index: 99;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# Add the footer with copyright information
+st.markdown(
+    """
+    <div class="footer" style="text-align: right; padding-right: 160px;">
+        &copy;2024 , Made For <b>"UWA NLP-TLP Group"</b>, Designed and Developed by <b>Manish Varada Reddy, Melo Xue, Shanmugapriya Sankarraj, Xudong Ying, Yu Xia, Zihan Zhang<b>.
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
 # Initialize session state for page selection
 if 'page' not in st.session_state:
     st.session_state.page = "D3.js Plot"  # Default page
+
+# Add custom CSS for the sidebar logo and buttons
+st.markdown(
+    """
+    <style>
+    .sidebar-logo img {
+        width: 150px;  /* Adjust the size of the logo */
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 20px;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# Add the logo to the sidebar using st.image
+st.sidebar.image("nlp-tlp-logo.png", width=130)
 
 # Create a sidebar header
 st.sidebar.header("Navigation")
@@ -452,5 +514,3 @@ elif st.session_state.page == "D3.js Plot":
     )
 
     st.header("D3.js Plot")
-    
-
