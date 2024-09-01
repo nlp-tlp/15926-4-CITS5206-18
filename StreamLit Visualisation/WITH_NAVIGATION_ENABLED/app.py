@@ -89,7 +89,7 @@ if st.sidebar.button("NetworkX Plot"):
 if st.session_state.page == "NetworkX Plot":
     # NetworkX plot code:
 
-    # Load the new dataset from JSON file
+    # Load the dataset from JSON file
     with open('final_output.json') as json_file:
         data = json.load(json_file)
 
@@ -102,91 +102,97 @@ if st.session_state.page == "NetworkX Plot":
     # First search bar: Search by unique name with auto-fill
     search_term = st.sidebar.selectbox("Search by Unique Name", unique_names)
 
-    # Second search bar: Number of parent nodes to display
-    parent_limit = st.sidebar.number_input("Number of Parent Nodes", min_value=0, max_value=10, value=3, step=1)
+    # Input for the number of parent levels to display
+    parent_level_limit = st.sidebar.number_input("Number of Parent Levels", min_value=0, max_value=10, value=3, step=1)
 
-    # Third search bar: Number of children nodes to display
-    children_limit = st.sidebar.number_input("Number of Children Nodes", min_value=0, max_value=10, value=3, step=1)
+    # Input for the number of children levels to display
+    children_level_limit = st.sidebar.number_input("Number of Children Levels", min_value=0, max_value=10, value=3, step=1)
 
-    # Create a graph
+    # Create a directed graph
     G = nx.DiGraph()
 
-    # Add nodes and edges, including the description in the node's title (which is shown as a tooltip)
+    # Add nodes and edges with descriptions
     for item in data:
         unique_name = item['uniqueName']
-        
-        # Handle potential NaN values in the superclasses and subclasses fields
         superclasses = item['superclasses'].split(', ') if 'superclasses' in item and item['superclasses'] else []
         subclasses = item['subclasses'].split(', ') if 'subclasses' in item and item['subclasses'] else []
-
-        # Ensure description is always a string
         description = str(item['description']) if 'description' in item and item['description'] else ""
 
-        # Add node to the graph with the description as a tooltip
-        G.add_node(unique_name, title=description)  
-        
-        # Add edges for superclasses (reversing the direction)
+        # Add node to the graph with description as tooltip
+        G.add_node(unique_name, title=description)
+
+        # Add edges for superclasses and subclasses
         for superclass in superclasses:
             if superclass:
                 G.add_node(superclass)
-                G.add_edge(superclass, unique_name)  # Corrected edge direction for hierarchy
-        
-        # Add edges for subclasses (reversing the direction)
+                G.add_edge(superclass, unique_name)  # Correct direction: superclass to the node
+
         for subclass in subclasses:
             if subclass:
                 G.add_node(subclass)
-                G.add_edge(unique_name, subclass)  # Corrected edge direction for hierarchy
+                G.add_edge(unique_name, subclass)  # Correct direction: node to subclass
 
-    # Initialize the network graph visualization
-    net = Network(height="1000px", width="100%", bgcolor="#222222", font_color="white", directed=True)
+    # Initialize PyVis network graph with white background and black text
+    net = Network(height="1000px", width="100%", bgcolor="white", font_color="black", directed=True)
 
-    # Filter the graph if a search term is provided
+    # Filtering logic for displaying nodes up to specified parent and child levels from the search term
     if search_term and search_term in G:
-        # Get parent nodes (ancestors) up to the specified limit
-        parent_nodes = list(nx.ancestors(G, search_term))[:parent_limit]
-        
-        # Get child nodes (descendants) up to the specified limit
-        child_nodes = list(nx.descendants(G, search_term))[:children_limit]
+        # BFS for Parent Nodes up to the specified parent levels
+        parent_nodes = {search_term}
+        current_level_nodes = {search_term}
 
-        # Include the search term and its direct neighbors
-        sub_graph_nodes = [search_term] + parent_nodes + child_nodes
+        for _ in range(parent_level_limit):
+            next_level_nodes = set()
+            for node in current_level_nodes:
+                next_level_nodes.update(G.predecessors(node))  # Parents (ancestors)
+            current_level_nodes = next_level_nodes - parent_nodes
+            parent_nodes.update(current_level_nodes)
+
+        # BFS for Child Nodes up to the specified children levels
+        child_nodes = {search_term}
+        current_level_nodes = {search_term}
+
+        for _ in range(children_level_limit):
+            next_level_nodes = set()
+            for node in current_level_nodes:
+                next_level_nodes.update(G.successors(node))  # Children (descendants)
+            current_level_nodes = next_level_nodes - child_nodes
+            child_nodes.update(current_level_nodes)
+
+        # Combine parent, child nodes, and the search term into one subgraph
+        sub_graph_nodes = parent_nodes.union(child_nodes)
         sub_graph = G.subgraph(sub_graph_nodes).copy()
 
-        # Generate network graph visualization
+        # Convert subgraph to PyVis graph
         net.from_nx(sub_graph)
 
-        # Apply positions and set custom colors
+        # Apply specific colors based on node type
         for node in sub_graph.nodes():
-            # Set custom colors based on node type (search_term, parents, children)
             if node == search_term:
-                net.get_node(node)["color"] = "red"  # Color for searched node
+                net.get_node(node)["color"] = "red"  # Searched node
             elif node in parent_nodes:
-                net.get_node(node)["color"] = "green"  # Color for parent nodes
+                net.get_node(node)["color"] = "green"  # Parent nodes
             elif node in child_nodes:
-                net.get_node(node)["color"] = "blue"  # Color for child nodes
+                net.get_node(node)["color"] = "blue"  # Child nodes
             else:
                 net.get_node(node)["color"] = "white"  # Default color for other nodes
 
     else:
-        # If no search term is provided or the search term is not found, visualize the entire graph
+        # If no search term or term not found, visualize entire graph
         net.from_nx(G)
 
-    # Adjust the height of the description box to accommodate the full text
-    # Save the graph to a temporary file
+    # Save and embed the PyVis graph
     with tempfile.NamedTemporaryFile(delete=False, suffix=".html") as tmp_file:
         net.save_graph(tmp_file.name)
         tmp_file.seek(0)
         graph_html = tmp_file.read().decode()
 
-    # Convert the graph to a JSON serializable format
+    # Convert graph to JSON for JavaScript interactions
     graph_data = json_graph.node_link_data(G)
-
-    # Serialize the graph to JSON
     graph_json = json.dumps(graph_data)
 
     # Sidebar for displaying node descriptions
     with st.sidebar:
-        # Add a div for the floating bar in the sidebar
         st.markdown("""
             <div id="sidebarFloatingBar" style="
                 background-color: #fff;
@@ -197,44 +203,40 @@ if st.session_state.page == "NetworkX Plot":
             </div>
             """, unsafe_allow_html=True)
 
-    # JavaScript to handle node clicks using vis.js
-    components.html("""
-        """ + graph_html + """  <!-- Embed the PyVis graph -->
+    # JavaScript for handling node clicks
+    components.html(f"""
+        {graph_html}  <!-- Embed PyVis graph -->
         <script type="text/javascript">
-            // Parse the graph JSON data
-            const graphData = """ + graph_json + """;
+            const graphData = {graph_json};  // Safely pass JSON data
 
             // Function to escape HTML content
-            function escapeHtml(content) {
+            function escapeHtml(content) {{
                 const div = document.createElement('div');
                 div.textContent = content;
                 return div.innerHTML;
-            }
+            }}
 
             // Function to handle node clicks
-            function nodeClick(nodeId) {
-                //Find the node object in graphData using the nodeId
+            function nodeClick(nodeId) {{
                 const node = graphData.nodes.find(n => n.id === nodeId);
-                
-                // Display the node's title in the alert, fallback to nodeId if title is not available
                 const nodeTitle = node && node.title ? node.title : nodeId;
-                
                 const floatingBar = window.parent.document.getElementById('sidebarFloatingBar');
-                floatingBar.innerHTML =  escapeHtml(nodeTitle);
+                floatingBar.innerHTML = escapeHtml(nodeTitle);
                 floatingBar.style.display = 'block';
+            }}
 
-            }
-
-            // Ensure the network instance is properly accessed
-            var network = window.network;  // Access the network directly
-            network.on("click", function(params) {
-                if (params.nodes.length > 0) {
+            // Access the network instance and set up click event
+            var network = window.network;
+            network.on("click", function(params) {{
+                if (params.nodes.length > 0) {{
                     var nodeId = params.nodes[0];
                     nodeClick(nodeId);
-                }
-            });
+                }}
+            }});
         </script>
     """, height=1000)
+
+
 
     st.header("NetworkX Plot")
 
