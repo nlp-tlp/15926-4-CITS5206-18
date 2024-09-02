@@ -9,11 +9,38 @@ from networkx.readwrite import json_graph
 # Set the page layout to wide
 st.set_page_config(layout="wide")
 
-# Load custom CSS from an external file
-def load_css(file_name):
-    with open(file_name) as f:
-        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
-load_css("./style.css")
+# Add custom CSS for positioning the logo and footer
+st.markdown(
+    """
+    <style>
+    /* Position the logo at the bottom right */
+    .logo-container {
+        position: fixed;
+        right: 10px;
+        bottom: 10px;
+        z-index: 100;
+    }
+    .logo-container img {
+        width: 150px;  /* Adjust size as needed */
+        opacity: 0.8;  /* Optional: adjust opacity */
+    }
+
+    /* Style for the footer */
+    .footer {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        background-color: #f1f1f1;
+        color: #000;
+        text-align: center;
+        padding: 10px 0;
+        z-index: 99;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 # Add the footer with copyright information
 st.markdown(
@@ -25,6 +52,8 @@ st.markdown(
     unsafe_allow_html=True
 )
 
+
+
 # Initialize session state for page selection
 if 'page' not in st.session_state:
     st.session_state.page = "D3.js Plot"  # Default page
@@ -33,9 +62,13 @@ if 'page' not in st.session_state:
 st.markdown(
     """
     <style>
-    <div class="sidebar-logo">
-        <img src="https://your-logo-url.com/logo.png" alt="Logo">
-    </div>
+    .sidebar-logo img {
+        width: 150px;  /* Adjust the size of the logo */
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 20px;
+    }
     </style>
     """,
     unsafe_allow_html=True
@@ -185,6 +218,7 @@ if st.session_state.page == "NetworkX Plot":
                 return div.innerHTML;
             }}
 
+            
             // Function to handle node clicks
             function nodeClick(nodeId) {{
                 const node = graphData.nodes.find(n => n.id === nodeId);
@@ -315,23 +349,199 @@ elif st.session_state.page == "D3.js Plot":
     width = max(width, 1200)
     height = max(height, 1200)
 
-    # Read the HTML template
-    with open('d3_plot.html', 'r') as file:
-        html_template = file.read()
-
-    # Replace placeholders with data
-    html_content = html_template.replace('{{data}}', hierarchical_data_json)
-    html_content = html_content.replace('{{width}}', str(width))
-    html_content = html_content.replace('{{height}}', str(height))
-
-    # Display the D3.js graph
-    st.components.v1.html(html_content, height=1000)
-
-    st.header("D3.js Plot")
+    # Sidebar for displaying node descriptions
+    with st.sidebar:
+    # Add a div for the floating bar in the sidebar
+        st.markdown("""
+            <div id="sidebarFloatingBar" style="
+                background-color: #fff;
+                color: black;
+                padding: 10px;
+                border-radius: 5px;
+                display: none;">
+            </div>
+            """, unsafe_allow_html=True)
 
     # Display the D3.js graph with node descriptions on click, arrows on links, curved lines, a popup animation on hover, and panning/zooming
-    components.html(html_content, height=1000)
+    components.html(
+        """
+        <div id="d3-container" style="height: 1000px;"></div>
+        <script src="https://d3js.org/d3.v7.min.js"></script>
+        <script>
+            const data = """ + hierarchical_data_json + """;
+
+            const width = """ + str(width) + """;
+            const height = """ + str(height) + """;
+
+            const treeLayout = d3.tree().size([height, width]);
+
+            const root = d3.hierarchy(data);
+
+            treeLayout(root);
+
+            const svg = d3.select("#d3-container").append("svg")
+                .attr("width", width + 300)  // Add extra space to the right for labels
+                .attr("height", height + 200)
+                .call(d3.zoom().on("zoom", function(event) {
+                    svg.attr("transform", event.transform);
+                }))
+                .append("g")
+                .attr("transform", "translate(100,100)");
+
+            // Define the arrowhead marker
+            svg.append("defs").append("marker")
+                .attr("id", "arrow")
+                .attr("viewBox", "0 0 10 10")
+                .attr("refX", 10)
+                .attr("refY", 5)
+                .attr("markerWidth", 6)
+                .attr("markerHeight", 6)
+                .attr("orient", "auto-start-reverse")
+                .append("path")
+                .attr("d", "M 0 0 L 10 5 L 0 10 z")
+                .style("fill", "#ccc");
+
+            // Links with arrows and curved lines
+    svg.selectAll('path.link')
+        .data(root.links())
+        .enter().append('path')
+        .attr('class', 'link')
+        .attr('d', d3.linkHorizontal()
+            .x(d => d.y)
+            .y(d => d.x)
+        )
+        .attr("fill", "none")
+        .attr("stroke", function(d) {
+            let source = d.source;
+            while (source) {
+                if (source.data.name.toUpperCase() === "SUPERCLASSES") {
+                    return "#FFD700"; // Yellow color for "Superclasses"
+                } else if (source.data.name.toUpperCase() === "SUBCLASSES") {
+                    return "#1E90FF"; // Blue color for "Subclasses"
+                }
+                source = source.parent;
+            }
+            return "#ccc"; // Default color for other links
+        })
+        .attr("stroke-width", 2)
+        .attr("marker-end", function(d) {
+            let source = d.source;
+            while (source) {
+                if (source.data.name.toUpperCase() === "SUPERCLASSES") {
+                    return "url(#arrow-superclasses)";
+                } else if (source.data.name.toUpperCase() === "SUBCLASSES") {
+                    return "url(#arrow-subclasses)";
+                }
+                source = source.parent;
+            }
+            return "url(#arrow)";
+        });
+
+    // Define the arrowhead markers with specific colors
+    svg.append("defs").append("marker")
+        .attr("id", "arrow-superclasses")
+        .attr("viewBox", "0 0 10 10")
+        .attr("refX", 10)
+        .attr("refY", 5)
+        .attr("markerWidth", 6)
+        .attr("markerHeight", 6)
+        .attr("orient", "auto-start-reverse")
+        .append("path")
+        .attr("d", "M 0 0 L 10 5 L 0 10 z")
+        .style("fill", "#FFD700"); // Yellow color for "Superclasses"
+
+    svg.append("defs").append("marker")
+        .attr("id", "arrow-subclasses")
+        .attr("viewBox", "0 0 10 10")
+        .attr("refX", 10)
+        .attr("refY", 5)
+        .attr("markerWidth", 6)
+        .attr("markerHeight", 6)
+        .attr("orient", "auto-start-reverse")
+        .append("path")
+        .attr("d", "M 0 0 L 10 5 L 0 10 z")
+        .style("fill", "#1E90FF"); // Blue color for "Subclasses"
+
+    // Default arrow for other nodes
+    svg.append("defs").append("marker")
+        .attr("id", "arrow")
+        .attr("viewBox", "0 0 10 10")
+        .attr("refX", 10)
+        .attr("refY", 5)
+        .attr("markerWidth", 6)
+        .attr("markerHeight", 6)
+        .attr("orient", "auto-start-reverse")
+        .append("path")
+        .attr("d", "M 0 0 L 10 5 L 0 10 z")
+        .style("fill", "#ccc"); // Default color for other arrows
+
+            
+            
+            // Function to escape HTML content
+            function escapeHtml(content) {{
+                const div = document.createElement('div');
+                div.textContent = content;
+                return div.innerHTML;
+            }}
+
+            // Nodes with popup animation on hover and drag behavior
+            const node = svg.selectAll('circle')
+            .data(root.descendants())
+            .enter()
+            .append('circle')
+            .attr('cx', d => d.y)
+            .attr('cy', d => d.x)
+            .attr('r', d => {
+                if (d.data.name === "Superclasses" || d.data.name === "Subclasses") {
+                    return 20;  // Larger radius for "Superclasses" and "Subclasses"
+                } else {
+                    return 10;  // Default radius for other nodes
+                }
+            })
+            .style("fill", d => d.data.color || "#69b3a2")
+
+            
+
+            .on("click", function(event, d) {
+                //alert(d.data.description || "No description available.");
+                const floatingBar = window.parent.document.getElementById('sidebarFloatingBar');
+                floatingBar.innerHTML =  escapeHtml(d.data.description);
+                floatingBar.style.display = 'block';
+            })
+            .on("mouseover", function(event, d) {
+                if (d.data.name !== "Superclasses" && d.data.name !== "Subclasses") {
+                    d3.select(this).transition()
+                        .duration(200)
+                        .attr("r", 20);  // Increase radius on hover only for other nodes
+                }
+            })
+            .on("mouseout", function(event, d) {
+                if (d.data.name !== "Superclasses" && d.data.name !== "Subclasses") {
+                    d3.select(this).transition()
+                        .duration(200)
+                        .attr("r", 10);  // Revert to original radius only for other nodes
+                }
+            });
+
+
+            // Labels
+            svg.selectAll('text')
+                .data(root.descendants())
+                .enter()
+                .append('text')
+                .attr('x', d => d.y + 15)
+                .attr('y', d => d.x + 5)
+                .attr('dy', -10)
+                .attr('text-anchor', 'start')
+                .style("font-size", "20px")
+                .style("fill", "black")
+                .style("font-weight", "bold")
+                .style("overflow", "visible")  // Allow text to extend beyond its box
+                .style("text-transform", d => (d.data.name === "Superclasses" || d.data.name === "Subclasses") ? "uppercase" : "none")
+                .text(d => d.data.name);
+        </script>
+        """, 
+        height=1000
+    )
 
     st.header("D3.js Plot")
-
-
