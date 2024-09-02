@@ -9,38 +9,11 @@ from networkx.readwrite import json_graph
 # Set the page layout to wide
 st.set_page_config(layout="wide")
 
-# Add custom CSS for positioning the logo and footer
-st.markdown(
-    """
-    <style>
-    /* Position the logo at the bottom right */
-    .logo-container {
-        position: fixed;
-        right: 10px;
-        bottom: 10px;
-        z-index: 100;
-    }
-    .logo-container img {
-        width: 150px;  /* Adjust size as needed */
-        opacity: 0.8;  /* Optional: adjust opacity */
-    }
-
-    /* Style for the footer */
-    .footer {
-        position: fixed;
-        left: 0;
-        bottom: 0;
-        width: 100%;
-        background-color: #f1f1f1;
-        color: #000;
-        text-align: center;
-        padding: 10px 0;
-        z-index: 99;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+# Load custom CSS from an external file
+def load_css(file_name):
+    with open(file_name) as f:
+        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+load_css("./style.css")
 
 # Add the footer with copyright information
 st.markdown(
@@ -60,13 +33,9 @@ if 'page' not in st.session_state:
 st.markdown(
     """
     <style>
-    .sidebar-logo img {
-        width: 150px;  /* Adjust the size of the logo */
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-        margin-bottom: 20px;
-    }
+    <div class="sidebar-logo">
+        <img src="https://your-logo-url.com/logo.png" alt="Logo">
+    </div>
     </style>
     """,
     unsafe_allow_html=True
@@ -516,3 +485,5 @@ elif st.session_state.page == "D3.js Plot":
     )
 
     st.header("D3.js Plot")
+
+
