@@ -52,8 +52,6 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-
-
 # Initialize session state for page selection
 if 'page' not in st.session_state:
     st.session_state.page = "D3.js Plot"  # Default page
@@ -87,28 +85,42 @@ if st.sidebar.button("D3.js Plot"):
 if st.sidebar.button("NetworkX Plot"):
     st.session_state.page = "NetworkX Plot"
 
+# Load the dataset from JSON file
+with open('final_output.json') as json_file:
+    data = json.load(json_file)
+
+# Create the sidebar for search bars
+st.sidebar.header("Search Options")
+
+# Extract unique names
+unique_names = [item['uniqueName'] for item in data]
+
+# First search bar: Search by unique name with auto-fill
+search_term = st.sidebar.selectbox("Search by Unique Name", unique_names)
+
+# Input for the number of parent levels to display
+parent_limit = st.sidebar.number_input("Number of Parent Levels", min_value=0, max_value=10, value=3, step=1)
+
+# Input for the number of children levels to display
+children_limit = st.sidebar.number_input("Number of Children Levels", min_value=0, max_value=10, value=3, step=1)
+
+# Sidebar for displaying node descriptions
+with st.sidebar:
+    st.markdown("""
+        <div id="sidebarFloatingBar" style="
+            background-color: #fff;
+            color: black;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;">
+        </div>
+        """, unsafe_allow_html=True)
+    
 # Display content based on the selected page
 if st.session_state.page == "NetworkX Plot":
+
     # NetworkX plot code:
-
-    # Load the dataset from JSON file
-    with open('final_output.json') as json_file:
-        data = json.load(json_file)
-
-    # Create the sidebar for search bars
-    st.sidebar.header("Search Options")
-
-    # Extract unique names
-    unique_names = [item['uniqueName'] for item in data]
-
-    # First search bar: Search by unique name with auto-fill
-    search_term = st.sidebar.selectbox("Search by Unique Name", unique_names)
-
-    # Input for the number of parent levels to display
-    parent_level_limit = st.sidebar.number_input("Number of Parent Levels", min_value=0, max_value=10, value=3, step=1)
-
-    # Input for the number of children levels to display
-    children_level_limit = st.sidebar.number_input("Number of Children Levels", min_value=0, max_value=10, value=3, step=1)
+    st.header("NetworkX Plot")
 
     # Create a directed graph
     G = nx.DiGraph()
@@ -143,7 +155,7 @@ if st.session_state.page == "NetworkX Plot":
         parent_nodes = {search_term}
         current_level_nodes = {search_term}
 
-        for _ in range(parent_level_limit):
+        for _ in range(parent_limit):
             next_level_nodes = set()
             for node in current_level_nodes:
                 next_level_nodes.update(G.predecessors(node))  # Parents (ancestors)
@@ -154,7 +166,7 @@ if st.session_state.page == "NetworkX Plot":
         child_nodes = {search_term}
         current_level_nodes = {search_term}
 
-        for _ in range(children_level_limit):
+        for _ in range(children_limit):
             next_level_nodes = set()
             for node in current_level_nodes:
                 next_level_nodes.update(G.successors(node))  # Children (descendants)
@@ -192,26 +204,15 @@ if st.session_state.page == "NetworkX Plot":
     # Convert graph to JSON for JavaScript interactions
     graph_data = json_graph.node_link_data(G)
     graph_json = json.dumps(graph_data)
+       
 
-    # Sidebar for displaying node descriptions
-    with st.sidebar:
-        st.markdown("""
-            <div id="sidebarFloatingBar" style="
-                background-color: #fff;
-                color: black;
-                padding: 10px;
-                border-radius: 5px;
-                display: none;">
-            </div>
-            """, unsafe_allow_html=True)
-
-    # JavaScript for handling node clicks
+    # JavaScript for handling node clicks in NetworkX Plot
     components.html(f"""
         {graph_html}  <!-- Embed PyVis graph -->
         <script type="text/javascript">
             const graphData = {graph_json};  // Safely pass JSON data
 
-            // Function to escape HTML content
+            // Function to escape HTML content in node description
             function escapeHtml(content) {{
                 const div = document.createElement('div');
                 div.textContent = content;
@@ -222,9 +223,9 @@ if st.session_state.page == "NetworkX Plot":
             // Function to handle node clicks
             function nodeClick(nodeId) {{
                 const node = graphData.nodes.find(n => n.id === nodeId);
-                const nodeTitle = node && node.title ? node.title : nodeId;
+                const nodeTitle = node.title;
                 const floatingBar = window.parent.document.getElementById('sidebarFloatingBar');
-                floatingBar.innerHTML = escapeHtml(nodeTitle);
+                floatingBar.innerHTML = nodeTitle ? escapeHtml(nodeTitle) : "No description available.";
                 floatingBar.style.display = 'block';
             }}
 
@@ -238,33 +239,14 @@ if st.session_state.page == "NetworkX Plot":
             }});
         </script>
     """, height=1000)
-
-
-
-    st.header("NetworkX Plot")
+  
 
 elif st.session_state.page == "D3.js Plot":
+
     # D3.js plot code:
+    st.header("D3.js Plot")
 
-    # Load JSON data
-    with open('final_output.json') as json_file:
-        data = json.load(json_file)
-
-    # Create the sidebar for search bars
-    st.sidebar.header("Search Options")
-
-    # Extract unique names
-    unique_names = [item["uniqueName"] for item in data]
-
-    # First search bar: Search by unique name with auto-fill
-    search_term = st.sidebar.selectbox("Search by Unique Name", unique_names)
-
-    # Second search bar: Number of parent levels to display
-    parent_limit = st.sidebar.number_input("Number of Parent Levels", min_value=0, max_value=10, value=2, step=1)
-
-    # Third search bar: Number of children levels to display
-    children_limit = st.sidebar.number_input("Number of Children Levels", min_value=0, max_value=10, value=2, step=1)
-
+    
     # Define a function to assign colors based on the level
     def get_color_by_level(level):
         colors = [
@@ -338,6 +320,7 @@ elif st.session_state.page == "D3.js Plot":
 
     # Convert hierarchical data to JSON format
     hierarchical_data_json = json.dumps(hierarchical_data)
+    
 
     # Calculate the height and width dynamically based on the depth and number of nodes
     num_nodes = len(hierarchical_data['children'][0]['children']) + len(hierarchical_data['children'][1]['children']) + 1
@@ -348,19 +331,6 @@ elif st.session_state.page == "D3.js Plot":
     # Ensure a minimum size
     width = max(width, 1200)
     height = max(height, 1200)
-
-    # Sidebar for displaying node descriptions
-    with st.sidebar:
-    # Add a div for the floating bar in the sidebar
-        st.markdown("""
-            <div id="sidebarFloatingBar" style="
-                background-color: #fff;
-                color: black;
-                padding: 10px;
-                border-radius: 5px;
-                display: none;">
-            </div>
-            """, unsafe_allow_html=True)
 
     # Display the D3.js graph with node descriptions on click, arrows on links, curved lines, a popup animation on hover, and panning/zooming
     components.html(
@@ -505,7 +475,7 @@ elif st.session_state.page == "D3.js Plot":
             .on("click", function(event, d) {
                 //alert(d.data.description || "No description available.");
                 const floatingBar = window.parent.document.getElementById('sidebarFloatingBar');
-                floatingBar.innerHTML =  escapeHtml(d.data.description);
+                floatingBar.innerHTML = d.data.description ? escapeHtml(d.data.description) : "No description available.";
                 floatingBar.style.display = 'block';
             })
             .on("mouseover", function(event, d) {
@@ -544,4 +514,4 @@ elif st.session_state.page == "D3.js Plot":
         height=1000
     )
 
-    st.header("D3.js Plot")
+    
