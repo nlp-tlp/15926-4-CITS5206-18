@@ -51,7 +51,7 @@ def setup_footer():
 
 def setup_sidebar():
     """Set up the sidebar with logo and navigation."""
-    st.sidebar.image("../static/images/nlp-tlp-logo.png", width=130)
+    st.sidebar.image("static/images/nlp-tlp-logo.png", width=130)
     st.sidebar.header("Navigation")
 
     if st.sidebar.button("D3.js Plot"):

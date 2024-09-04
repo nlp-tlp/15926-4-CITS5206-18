@@ -10,7 +10,7 @@ def display_d3js_plot(data, search_term, parent_limit, children_limit):
     hierarchical_data = prepare_hierarchical_data(data, search_term, parent_limit, children_limit)
     hierarchical_data_json = json.dumps(hierarchical_data)
 
-    with open("../static/d3_plot.html", "r") as f:
+    with open("static/d3_plot.html", "r") as f:
         d3_template = f.read()
 
     d3_html = d3_template.replace("{{data}}", hierarchical_data_json)
