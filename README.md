@@ -47,7 +47,7 @@ To run this project locally, follow these steps:
     ```
 
 ## Project Structure
-
+```
 The project has been structured into multiple modules for better organization and maintainability:
 14926-4-CITS5206-18
 │
@@ -76,7 +76,7 @@ The project has been structured into multiple modules for better organization an
 |
 ├── requirements.txt                # List of dependencies
 └── README.md
-
+```
 ## Usage
 
 To use the interactive visualization tool:
