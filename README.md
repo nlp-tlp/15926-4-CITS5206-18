@@ -46,24 +46,30 @@ To run this project locally, follow these steps:
     streamlit run src/main.py
     ```
 
+
+5. **Update the Dataset Mannually:**
+
+    ```bash
+    python3 script/data_retrieve.py
+    ```
+
 ## Project Structure
 ```
 The project has been structured into multiple modules for better organization and maintainability:
 14926-4-CITS5206-18
 │
 ├── src/
-│   ├── init.py                     # Initialize src package
 │   ├── main.py                     # Main application entry point
 │   ├── layout.py                   # Functions related to layout and styling
 │   ├── data_handler.py             # Data loading functions
 │   ├── networkx_plot.py            # NetworkX plot visualization functions
-│   ├── d3js_plot.py                # D3.js plot visualization functions
-│   └── utils.py                    # Utility functions
+│   └── d3js_plot.py                # D3.js plot visualization functions
 │
 ├── static/
 │   ├── css/
 │   │   └── style.css
-│   └── d3_plot.html                # D3.js plot HTML template
+│   └── images/
+│       └── nlp-tlp-logo.png
 │
 ├── data/
 │   └── final_output.json           # Data source file
@@ -103,9 +109,9 @@ To use the interactive visualization tool:
 We welcome contributions to enhance the functionality and usability of this tool. To contribute:
 
 1. Fork the repository.
-2. Create a new branch (`git checkout -b feature/your-feature`).
+2. Create a new branch (`git checkout branch_name`).
 3. Make your changes and commit them (`git commit -m 'Add some feature'`).
-4. Push to the branch (`git push origin feature/your-feature`).
+4. Push to the branch (`git push origin branch_name`).
 5. Create a new Pull Request.
 
 ## License

@@ -1,12 +1,19 @@
 import json
-import os
+import streamlit as st
 
-def load_data():
-    """Load the dataset from JSON file."""
-    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    json_path = os.path.join(base_dir, 'data', 'final_output.json')
+def load_data(json_path):
+    """Load data from a JSON file."""
+    try:
+        with open(json_path) as json_file:
+            data = json.load(json_file)
+        return data
+    except FileNotFoundError:
+        st.error(f"File not found: {json_path}")
+        return []
+    except json.JSONDecodeError:
+        st.error(f"Error decoding JSON file: {json_path}")
+        return []
 
-    with open(json_path) as json_file:
-        data = json.load(json_file)
-
-    return data
+def extract_unique_names(data):
+    """Extract unique names from the loaded data."""
+    return [item['uniqueName'] for item in data]
