@@ -52,7 +52,7 @@ The project has been structured into multiple modules for better organization an
 14926-4-CITS5206-18
 │
 ├── src/
-│   ├── init.py                 # Initialize src package
+│   ├── init.py                     # Initialize src package
 │   ├── main.py                     # Main application entry point
 │   ├── layout.py                   # Functions related to layout and styling
 │   ├── data_handler.py             # Data loading functions
