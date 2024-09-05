@@ -44,10 +44,10 @@ st.sidebar.image("static/images/nlp-tlp-logo.png", width=130)
 st.sidebar.header("Navigation")
 
 # Create two buttons in the sidebar
-if st.sidebar.button("D3.js Plot"):
+if st.sidebar.button("TREE Plot"):
     st.session_state.page = "D3.js Plot"
 
-if st.sidebar.button("NetworkX Plot"):
+if st.sidebar.button("NETWORK Plot"):
     st.session_state.page = "NetworkX Plot"
 
 # Construct absolute path to the JSON file
