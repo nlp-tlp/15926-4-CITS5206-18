@@ -53,8 +53,6 @@ def add_documentation_section():
     """Add the documentation section to the app."""
     with st.expander("📚**DOCUMENTATION**📚"):
         st.markdown("""
-        ### How to Use the Interactive Graph Visualization Tool:
-        
         **Overview:**
         This tool allows you to visualize hierarchical relationships using a directed graph. Nodes represent unique elements, and edges show parent-child relationships. The visualization utilizes D3.js and NetworkX to offer a dynamic, interactive experience.
 
@@ -77,8 +75,8 @@ def add_documentation_section():
         - **Drag and Drop:** Nodes can be dragged around to better explore the graph layout.
         - **Zoom and Pan:** The D3.js graph supports zooming in/out and panning across the graph to dynamically explore different areas.
         - **Branch Colors:**
-            - **Yellow:** Branches connecting all the PARENT nodes.
-            - **Blue:** Branches connecting all the CHILDREN nodes, showing interconnected relationships around the selected node.
+            - **Yellow:** Branches connecting all the PARENT nodes for the selected node.
+            - **Blue:** Branches connecting all the CHILDREN nodes for the selected node.
 
         **Controls:**
         - Adjust the levels using the side panel to dynamically update the displayed graph.
