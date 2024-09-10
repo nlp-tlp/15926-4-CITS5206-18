@@ -1,114 +1,141 @@
 import pandas as pd
 from SPARQLWrapper import SPARQLWrapper, JSON
-# Function to replace HTML entities in descriptions
+import json
+
+# Function to replace HTML entities like &lt; and &gt; with < and >
 def replace_html_entities(text):
     return text.replace('&lt;', '<').replace('&gt;', '>')
-# Define SPARQL endpoint and query
+
+# Define the SPARQL endpoint where queries will be sent
 sparql = SPARQLWrapper("http://190.92.134.58:8890/sparql")
-sparql.setQuery("""
-    prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-    prefix skos: <http://www.w3.org/2004/02/skos/core#>
-    prefix meta: <http://data.15926.org/meta/>
 
-    SELECT ?uniqueName ?description ?childClassName ?childDescription ?childSuperClasses ?childSuperClassDescription
-    WHERE {
-      ?class rdfs:subClassOf <http://data.15926.org/lci/FunctionalObject> .
-      ?class rdfs:label ?uniqueName .
+# List of prefixes to divide the queries (A-Z and 0-9), which allows querying in subsets
+prefixes = [chr(i) for i in range(ord('A'), ord('Z')+1)] + [str(i) for i in range(0, 10)]  # A-Z and 0-9
 
-      OPTIONAL {
-        ?class skos:definition ?description .
-      }
+# List of uniqueNames to filter out (these names can't be searched)
+excluded_unique_names = [
+    "AllDifferent", "AnnotationProperty", "DataRange", "DatatypeProperty",
+    "DeprecatedClass", "DeprecatedProperty", "FunctionalProperty",
+    "Ontology", "OntologyProperty"
+]
 
-      OPTIONAL {
-        ?childClass rdfs:subClassOf ?class .
-        ?childClass rdfs:label ?childClassName .
-        FILTER (NOT EXISTS {?childClass meta:valDeprecationDate ?xdt2})
-
-        OPTIONAL {
-          ?childClass skos:definition ?childDescription .
-        }
-
-        OPTIONAL {
-          ?childSuperClass rdfs:subClassOf ?childClass .
-          ?childSuperClass rdfs:label ?childSuperClasses .
-          FILTER (NOT EXISTS {?childSuperClass meta:valDeprecationDate ?xdt3})
-
-          OPTIONAL {
-            ?childSuperClass skos:definition ?childSuperClassDescription .
-          }
-        }
-      }
-    }
-    ORDER BY ?uniqueName ?childClassName
-""")
-sparql.setReturnFormat(JSON)
-results = sparql.query().convert()
-
-# Process the results into a dictionary
+# Dictionary to hold the combined results from all queries
 data = {}
 
-for result in results["results"]["bindings"]:
-    unique_name = result["uniqueName"]["value"]
-    description = replace_html_entities(result.get("description", {}).get("value", ""))
-    
-    child_class = result.get("childClassName", {}).get("value", "")
-    child_description = replace_html_entities(result.get("childDescription", {}).get("value", ""))
-    
-    child_super_classes = result.get("childSuperClasses", {}).get("value", "")
-    child_superclass_description = replace_html_entities(result.get("childSuperClassDescription", {}).get("value", ""))
+# Step 1: Query each subset of classes based on the prefix
+for prefix in prefixes:
+    # SPARQL query is constructed here for each prefix
+    query = f"""
+    prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>   # Standard RDF schema prefix for class relationships
+    prefix skos: <http://www.w3.org/2004/02/skos/core#>    # SKOS (Simple Knowledge Organization System) prefix for definitions
+    prefix meta: <http://data.15926.org/meta/>             # Custom meta-data namespace for deprecation and other info
+    prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>  # Basic RDF syntax
 
-    # Initialize unique_name in data if not already present
-    if unique_name not in data:
-        data[unique_name] = {
-            "Super Classes": set(),
-            "Sub Classes": set(),
-            "Description": description
-        }
+    SELECT ?uniqueName ?superClassName ?description ?type ?subClassName
+    WHERE {{
+      # Retrieve the label (name) of the class and bind it to ?uniqueName
+      ?class rdfs:label ?uniqueName .
+      
+      # Filter the results to only include classes where the name starts with the current prefix (A-Z or 0-9)
+      FILTER (STRSTARTS(STR(?uniqueName), "{prefix}"))
+      
+      # Exclude any classes whose names match those in the excluded list (e.g., AllDifferent, AnnotationProperty, etc.)
+      FILTER (?uniqueName NOT IN ({', '.join([f'"{name}"' for name in excluded_unique_names])}))
 
-    # Add child classes to unique_name's subclasses
-    if child_class:
-        data[unique_name]["Sub Classes"].add(child_class)
+      # Optionally retrieve the definition of the class from SKOS (if it exists)
+      OPTIONAL {{
+        ?class skos:definition ?description .
+      }}
+
+      # Optionally retrieve the superclass of the class, if it has one
+      OPTIONAL {{
+        ?class rdfs:subClassOf ?superClass .
+        ?superClass rdfs:label ?superClassName .
+      }}
+
+      # Optionally retrieve any subclasses of the class, if they exist
+      OPTIONAL {{
+        ?subClass rdfs:subClassOf ?class .
+        ?subClass rdfs:label ?subClassName .
+      }}
+
+      # Optionally retrieve the type of the class if it is defined
+      OPTIONAL {{
+        GRAPH ?coco {{
+          ?class rdf:type ?cocoid .
+        }}
+        ?cocoid rdfs:label ?type .
+      }}
+
+      # Filter out any classes that have been marked as deprecated (using meta:valDeprecationDate)
+      FILTER (NOT EXISTS {{ ?class meta:valDeprecationDate ?xdt1 }})
+      FILTER (NOT EXISTS {{ ?superClass meta:valDeprecationDate ?xdt2 }})
+    }}
+    ORDER BY ?uniqueName   # Order the results by the uniqueName
+    """
+    
+    # Set the query to the SPARQL endpoint and set the return format to JSON
+    sparql.setQuery(query)
+    sparql.setReturnFormat(JSON)
+
+    # Execute the query and get the results in JSON format
+    results = sparql.query().convert()
+    
+    # Process the results to extract useful information
+    for result in results["results"]["bindings"]:
+        # Get the uniqueName (label) of the class
+        unique_name = result["uniqueName"]["value"]
         
-        # Initialize the child class entry
-        if child_class not in data:
-            data[child_class] = {
-                "Super Classes": set(),
-                "Sub Classes": set(),
-                "Description": child_description
+        # Get the description, if available
+        description = replace_html_entities(result.get("description", {}).get("value", ""))
+        
+        # Get the superClass name, if available
+        super_class_name = result.get("superClassName", {}).get("value", "")
+        
+        # Get the type, if available
+        type_name = result.get("type", {}).get("value", "")
+        
+        # Get the subClass name, if available
+        sub_class_name = result.get("subClassName", {}).get("value", "")
+        
+        # Initialize data for the uniqueName if it hasn't been added yet
+        if unique_name not in data:
+            data[unique_name] = {
+                "superClasses": set(),  # Set to store unique superClass names
+                "subClasses": set(),    # Set to store unique subClass names
+                "description": description,  # The description of the class
+                "types": set()          # Set to store unique types
             }
         
-        # Add unique_name as a superclass of the child class
-        data[child_class]["Super Classes"].add(unique_name)
+        # Add the superClass name to the set (if it exists)
+        if super_class_name:
+            data[unique_name]["superClasses"].add(super_class_name)
         
-        # Handle the superclasses of the child class
-        if child_super_classes:
-            data[child_class]["Sub Classes"].add(child_super_classes)
-            
-            # Initialize the superclass entry
-            if child_super_classes not in data:
-                data[child_super_classes] = {
-                    "Super Classes": set(),
-                    "Sub Classes": set(),
-                    "Description": child_superclass_description
-                }
-            
-            # Add child_class as a superclass of child_super_classes
-            data[child_super_classes]["Super Classes"].add(child_class)
+        # Add the subClass name to the set (if it exists)
+        if sub_class_name:
+            data[unique_name]["subClasses"].add(sub_class_name)
+        
+        # Add the type to the set (if it exists)
+        if type_name:
+            data[unique_name]["types"].add(type_name)
 
-# Prepare the data for CSV output
+# Step 2: Prepare the data for output
 output_data = []
+
+# Format the data for each uniqueName into a structured output format
 for unique_name, info in data.items():
     output_data.append({
         "uniqueName": unique_name,
-        "superclasses": ", ".join(info["Super Classes"]),
-        "subclasses": ", ".join(info["Sub Classes"]),
-        "description": info["Description"]
+        "superclasses": ", ".join(info["superClasses"]),    # Convert set to comma-separated string
+        "subclasses": ", ".join(info["subClasses"]),        # Convert set to comma-separated string
+        "description": info["description"],                # Use the description as it is
+        "types": ", ".join(info["types"])                  # Convert set to comma-separated string
     })
 
-# Convert the processed data into a DataFrame
-df = pd.DataFrame(output_data)
+# Convert the processed data to CSV if needed (commented out for now)
+# output_df = pd.DataFrame(output_data)
+# output_df.to_csv("../data/final_output.csv", index=False)
 
-# Save to CSV
-df.to_csv("final_output.csv", index=False)
-
-
+# Write the output data to a JSON file
+with open("../data/final_output.json", "w") as json_file:
+    json.dump(output_data, json_file, indent=4)
