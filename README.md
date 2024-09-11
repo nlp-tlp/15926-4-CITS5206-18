@@ -24,22 +24,13 @@ To run this project locally, follow these steps:
    cd 15926-4-CITS5206-18
    ```
 
-2. **Create a Virtual Environment:**
-
-   It is recommended to use a virtual environment to manage dependencies:
-
-   ```bash
-   python -m venv venv
-   source venv/bin/activate   # On Windows use `venv\Scripts\activate`
-   ```
-
-3. **Install Required Dependencies:**
+2. **Install Required Dependencies:**
 
    ```bash
    pip install -r requirements.txt
    ```
 
-4. **Run the Streamlit Application:**
+3. **Run the Streamlit Application:**
 
    ```bash
    streamlit run src/main.py
