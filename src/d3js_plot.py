@@ -96,6 +96,7 @@ def display_d3js_plot(data, search_term, parent_limit, children_limit):
     components.html(
         """
         <div id="d3-container" style="height: 1000px;"></div>
+        <div id="tooltip" style="position: absolute; display: none; background: #fff; border: 1px solid #ccc; padding: 10px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1);"></div>
         <script src="https://d3js.org/d3.v7.min.js"></script>
         <script>
             const data = """ + hierarchical_data_json + """;
@@ -227,7 +228,6 @@ def display_d3js_plot(data, search_term, parent_limit, children_limit):
                 }
             })
             .style("fill", d => d.data.color || "#69b3a2")
-
             .on("click", function(event, d) {
                 const floatingBar = window.parent.document.getElementById('sidebarFloatingBar');
                 floatingBar.innerHTML = d.data.description ? escapeHtml(d.data.description) : "No description available.";
@@ -239,6 +239,11 @@ def display_d3js_plot(data, search_term, parent_limit, children_limit):
                         .duration(200)
                         .attr("r", 20);  // Increase radius on hover only for other nodes
                 }
+                const tooltip = d3.select("#tooltip");
+                tooltip.style("display", "block")
+                    .html(d.data.description ? escapeHtml(d.data.description) : "No description available.")
+                    .style("left", (event.pageX + 10) + "px")
+                    .style("top", (event.pageY + 10) + "px");
             })
             .on("mouseout", function(event, d) {
                 if (d.data.name !== "Superclasses" && d.data.name !== "Subclasses") {
