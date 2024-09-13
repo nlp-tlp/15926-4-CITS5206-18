@@ -12,15 +12,13 @@ sparql = SPARQLWrapper("http://190.92.134.58:8890/sparql")
 # List of prefixes to divide the queries (A-Z and 0-9), which allows querying in subsets
 prefixes = [chr(i) for i in range(ord('A'), ord('Z')+1)] + [str(i) for i in range(0, 10)]  # A-Z and 0-9
 
-# List of uniqueNames to filter out (these names can't be searched)
-excluded_unique_names = [
-    "AllDifferent", "AnnotationProperty", "DataRange", "DatatypeProperty",
-    "DeprecatedClass", "DeprecatedProperty", "FunctionalProperty",
-    "Ontology", "OntologyProperty"
-]
+# In the list below,manually add uniqueNames that you want to filter out (for exapmle, excluded_unique_names =['Absorber'])
+excluded_unique_names =[]
 
 # Dictionary to hold the combined results from all queries
 data = {}
+# Dictionary to hold the filtered out data for classes with no superclass, subclass, description, or type
+filtered_out_data = {}
 
 # Step 1: Query each subset of classes based on the prefix
 for prefix in prefixes:
@@ -97,6 +95,18 @@ for prefix in prefixes:
         
         # Get the subClass name, if available
         sub_class_name = result.get("subClassName", {}).get("value", "")
+
+        
+        # Check if the class has no relevant data (i.e., empty superClass, subClass, description, or type)
+        # The purpose of this block is to ignore invalid data that don't have superclass, subclss,description and type
+        if not super_class_name and not sub_class_name and not description and not type_name:
+            filtered_out_data[unique_name] = {
+                "superClasses": super_class_name,
+                "subClasses": sub_class_name,
+                "description": description,
+                "types": type_name
+            }
+            continue  # Skip adding this to the main data
         
         # Initialize data for the uniqueName if it hasn't been added yet
         if unique_name not in data:
@@ -132,10 +142,24 @@ for unique_name, info in data.items():
         "types": ", ".join(info["types"])                  # Convert set to comma-separated string
     })
 
-# Convert the processed data to CSV if needed (commented out for now)
-# output_df = pd.DataFrame(output_data)
-# output_df.to_csv("../data/final_output.csv", index=False)
+# Prepare filtered-out data for writing. 
+filtered_out_list = []
+for unique_name, info in filtered_out_data.items():
+    filtered_out_list.append({
+        "uniqueName": unique_name,
+        "superclasses": info["superClasses"],
+        "subclasses": info["subClasses"],
+        "description": info["description"],
+        "types": info["types"]
+    })
 
-# Write the output data to a JSON file
+
+# Write the main output data to a JSON file
 with open("../data/final_output.json", "w") as json_file:
     json.dump(output_data, json_file, indent=4)
+
+# Write the filtered-out data to a separate JSON file
+with open("../data/filtered_out_data.json", "w") as filtered_file:
+    json.dump(filtered_out_list, filtered_file, indent=4)
+
+print("Files successfully saved.")
