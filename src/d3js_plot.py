@@ -37,7 +37,8 @@ def display_d3js_plot(data, search_term, parent_limit, children_limit):
                     "name": item["uniqueName"],
                     "children": find_parents(item["uniqueName"], level - 1, data, current_level + 1),
                     "color": color,
-                    "description": item["description"]
+                    "description": item["description"],
+                    "types": item["types"]
                 })
         return parents
 
@@ -53,7 +54,8 @@ def display_d3js_plot(data, search_term, parent_limit, children_limit):
                     "name": item["uniqueName"],
                     "children": find_children(item["uniqueName"], level - 1, data, current_level + 1),
                     "color": color,
-                    "description": item["description"]
+                    "description": item["description"],
+                    "types": item["types"]
                 })
         return children
 
@@ -76,7 +78,9 @@ def display_d3js_plot(data, search_term, parent_limit, children_limit):
             }
         ],
         "color": "red",  # The searched node remains red
-        "description": filtered_data["description"]
+        "description": filtered_data["description"],
+        "types": filtered_data["types"]
+        
     }
 
     # Convert hierarchical data to JSON format
@@ -229,9 +233,15 @@ def display_d3js_plot(data, search_term, parent_limit, children_limit):
             })
             .style("fill", d => d.data.color || "#69b3a2")
             .on("click", function(event, d) {
+                // To display node description
                 const floatingBar = window.parent.document.getElementById('sidebarFloatingBar');
                 floatingBar.innerHTML = d.data.description ? escapeHtml(d.data.description) : "No description available.";
                 floatingBar.style.display = 'block';
+
+                //To display node types information
+                const nodeType = window.parent.document.getElementById('nodeType');
+                nodeType.innerHTML = d.data.types ? escapeHtml(d.data.types) : "No Information available.";
+                nodeType.style.display = 'block';
             })
             .on("mouseover", function(event, d) {
                 if (d.data.name !== "Superclasses" && d.data.name !== "Subclasses") {
