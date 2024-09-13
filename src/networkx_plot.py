@@ -21,9 +21,11 @@ def display_networkx_plot(data, search_term, parent_limit, children_limit):
         superclasses = item['superclasses'].split(', ') if 'superclasses' in item and item['superclasses'] else []
         subclasses = item['subclasses'].split(', ') if 'subclasses' in item and item['subclasses'] else []
         description = str(item['description']) if 'description' in item and item['description'] else ""
+        types = str(item['types']) if 'types' in item and item['types'] else ""
+             
 
         # Add node to the graph with description as tooltip
-        G.add_node(unique_name, title=description)
+        G.add_node(unique_name, title=description, types = types)
 
         # Add edges for superclasses and subclasses
         for superclass in superclasses:
@@ -94,7 +96,7 @@ def display_networkx_plot(data, search_term, parent_limit, children_limit):
     # Convert graph to JSON for JavaScript interactions
     graph_data = json_graph.node_link_data(G)
     graph_json = json.dumps(graph_data)
-
+    
     # JavaScript for handling node clicks in NetworkX Plot
     components.html(f"""
         {graph_html}  <!-- Embed PyVis graph -->
@@ -111,10 +113,19 @@ def display_networkx_plot(data, search_term, parent_limit, children_limit):
             // Function to handle node clicks
             function nodeClick(nodeId) {{
                 const node = graphData.nodes.find(n => n.id === nodeId);
+
+                // To display node description
                 const nodeTitle = node.title;
                 const floatingBar = window.parent.document.getElementById('sidebarFloatingBar');
                 floatingBar.innerHTML = nodeTitle ? escapeHtml(nodeTitle) : "No description available.";
                 floatingBar.style.display = 'block';
+
+                // To display node types information
+                const nodetypes = node.types;
+                const nodeType = window.parent.document.getElementById('nodeType');
+                nodeType.innerHTML = nodetypes ? escapeHtml(nodetypes) : "No Information available.";
+                nodeType.style.display = 'block';
+                
             }}
 
             // Access the network instance and set up click event

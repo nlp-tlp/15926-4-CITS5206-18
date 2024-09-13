@@ -43,12 +43,30 @@ st.sidebar.image("static/images/nlp-tlp-logo.png", width=130)
 # Create a sidebar header
 st.sidebar.header("Navigation")
 
-# Create two buttons in the sidebar
-if st.sidebar.button("TREE Plot"):
-    st.session_state.page = "D3.js Plot"
+# Define sidebar layout with two buttons in a single row using HTML and CSS
+with st.sidebar:
+    st.markdown("""
+        <div style="display: flex; justify-content: space-between;">
+            <form action="#" method="get" style="flex: 1; margin-right: 5px;">
+                <button style="width: 100%;" type="submit" name="tree_plot">TREE Plot</button>
+            </form>
+            <form action="#" method="get" style="flex: 1; margin-left: 5px;">
+                <button style="width: 100%;" type="submit" name="network_plot">NETWORK Plot</button>
+            </form>
+        </div>
+    """, unsafe_allow_html=True)
 
-if st.sidebar.button("NETWORK Plot"):
+# Handle button clicks and query parameters
+query_params = st.query_params
+
+if "tree_plot" in query_params:
+    st.session_state.page = "D3.js Plot"
+    #st.write("Displaying D3.js Plot")
+
+if "network_plot" in query_params:
     st.session_state.page = "NetworkX Plot"
+    #st.write("Displaying NetworkX Plot")
+
 
 # Construct absolute path to the JSON file
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -67,10 +85,13 @@ unique_names = extract_unique_names(data)
 search_term = st.sidebar.selectbox("Search by Unique Name", unique_names)
 
 # Input for the number of parent levels to display
-parent_limit = st.sidebar.number_input("Number of Parent Levels", min_value=0, max_value=10, value=3, step=1)
+parent_limit = st.sidebar.number_input("Number of Levels of Superclass", min_value=0, max_value=10, value=3, step=1)
 
 # Input for the number of children levels to display
-children_limit = st.sidebar.number_input("Number of Children Levels", min_value=0, max_value=10, value=3, step=1)
+children_limit = st.sidebar.number_input("Number of Levels of Subclass", min_value=0, max_value=10, value=3, step=1)
+
+# Header for Node description box
+st.sidebar.header("Node Description")
 
 # Sidebar for displaying node descriptions
 with st.sidebar:
@@ -80,7 +101,25 @@ with st.sidebar:
             color: black;
             padding: 10px;
             border-radius: 5px;
+            margin-bottom: 20px;
             display: none;">
+        </div>
+        """, unsafe_allow_html=True)
+
+# Header for Node Types box
+st.sidebar.header("Node Types")
+    
+# Sidebar for displaying node types
+with st.sidebar:
+    st.markdown("""
+        
+        <div id="nodeType" style="
+            background-color: #fff;
+            color: black;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;">
+            
         </div>
         """, unsafe_allow_html=True)
 
