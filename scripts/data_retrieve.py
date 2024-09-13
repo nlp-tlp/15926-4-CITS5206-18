@@ -10,6 +10,7 @@ def replace_html_entities(text):
 sparql = SPARQLWrapper("http://190.92.134.58:8890/sparql")
 
 # List of prefixes to divide the queries (A-Z and 0-9), which allows querying in subsets
+# We choose to fetch data in alphabetical order due to the endpoint's output limitations.
 prefixes = [chr(i) for i in range(ord('A'), ord('Z')+1)] + [str(i) for i in range(0, 10)]  # A-Z and 0-9
 
 # In the list below,manually add uniqueNames that you want to filter out (for exapmle, excluded_unique_names =['Absorber'])
