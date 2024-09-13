@@ -42,8 +42,8 @@ def add_footer():
     """Add footer with copyright information."""
     st.markdown(
         """
-        <div class="footer" style="text-align: center; padding: 20px 0; position: relative; bottom: 0; width: 100%;">
-            &copy;2024 , Made For <b>"UWA NLP-TLP Group"</b>, Designed and Developed by <b>Manish Varada Reddy, Melo Xue, Shanmugapriya Sankarraj, Xudong Ying, Yu Xia, Zihan Zhang</b>.
+        <div class="footer">
+            &copy;2024, Made For <b>"UWA NLP-TLP Group"</b>, Designed and Developed by <b>Manish Varada Reddy, Melo Xue, Shanmugapriya Sankarraj, Xudong Ying, Yu Xia, Zihan Zhang</b>.
         </div>
         """,
         unsafe_allow_html=True
