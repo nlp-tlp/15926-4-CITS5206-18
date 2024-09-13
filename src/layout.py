@@ -42,8 +42,8 @@ def add_footer():
     """Add footer with copyright information."""
     st.markdown(
         """
-        <div class="footer" style="text-align: center; padding-left: 160px;">
-            &copy;2024 , Made For <b>"UWA NLP-TLP Group"</b>, Designed and Developed by <b>Manish Varada Reddy, Melo Xue, Shanmugapriya Sankarraj, Xudong Ying, Yu Xia, Zihan Zhang<b>.
+        <div class="footer" style="text-align: center; padding: 20px 0; position: relative; bottom: 0; width: 100%;">
+            &copy;2024 , Made For <b>"UWA NLP-TLP Group"</b>, Designed and Developed by <b>Manish Varada Reddy, Melo Xue, Shanmugapriya Sankarraj, Xudong Ying, Yu Xia, Zihan Zhang</b>.
         </div>
         """,
         unsafe_allow_html=True
@@ -53,51 +53,41 @@ def add_documentation_section():
     """Add the documentation section to the app."""
     with st.expander("📚**DOCUMENTATION**📚"):
         st.markdown("""
-        **Overview:**
-        This tool allows you to visualize hierarchical relationships using a directed graph. Nodes represent unique elements, and edges show parent-child relationships. The visualization utilizes D3.js and NetworkX to offer a dynamic, interactive experience.
+        ## **Overview**
+        The Interactive Visualization Tool for the ISO 15926-4 Standard helps users explore hierarchical data relationships with D3.js and NetworkX visualizations. The tool is built with Streamlit, offering a user-friendly web interface. It visualizes nodes as unique elements and edges as superclass-subclass relationships. The interactive functionality allows users to explore data structures dynamically.
 
-        **Search Options:**
-        - **Search by Unique Name:** Select a node to focus on by typing its name in the search bar.
-        - **Number of Parent Levels:** Set the number of levels of parent nodes (ancestors) to display from the selected node.
-        - **Number of Children Levels:** Set the number of levels of child nodes (descendants) to display from the selected node.
+        ## **Search Options**
+        - **Search by Unique Name**: Use the search bar to focus on a specific node.
+        - **Number of Superclass Levels**: Adjust how many levels of superclass nodes to display.
+        - **Number of Subclass Levels**: Adjust how many levels of subclass nodes to display.
 
-        **Graph Interaction Controls:**
-        1. **NetworkX Plot:**
-        - **Click on Nodes:** Clicking on a node will display its description in the sidebar.
-        - **Hover Effects:** On hovering over a node, it shows a popup animation with the node's name and description.
-        - **Node Colors:**
-            - **Red:** The node you are focusing on.
-            - **Green:** Parent nodes of the selected node.
-            - **Blue:** Child nodes of the selected node.
+        ## **Graph Interaction Controls**
+        1. **Network Plot**:
+            - **Click on Nodes**: Displays the node’s description in the sidebar.
+            - **Hover Effects**: Hovering on a node shows a tooltip with the node’s name and description.
+            - **Node Colors**:
+                - **Red**: Focus node.
+                - **Green**: Superclass nodes.
+                - **Blue**: Subclass nodes.
+
+        2. **Tree Plot**:
+            - **Click on Nodes**: Highlights the node and displays its description.
+            - **Drag and Drop**: Drag nodes to adjust their positions for better exploration.
+            - **Zoom and Pan**: Supports zooming in/out and panning across the graph.
+            - **Branch Colors**:
+                - **Yellow**: Connects superclass nodes.
+                - **Blue**: Connects subclass nodes.
+
+        ## **How to Use the Tool**
+        1. **Launch the Application**:
+            - Run the app using the `streamlit run src/main.py` command.
+        2. **Input Search Criteria**:
+            - **Unique Name**: Focus on a specific node by entering its name.
+            - **Superclass/Subclass Levels**: Adjust the number of superclass/subclass nodes to display.
+        3. **Explore the Graph**:
+            - Click on nodes for descriptions.
+            - Use the side panel to dynamically change the displayed number of superclass and subclass nodes.
+            - Drag, zoom, and pan to explore the hierarchical relationships.
         
-        2. **D3.js Plot:**
-        - **Click on Nodes:** Highlights the selected node and displays the node's description on the screen.
-        - **Drag and Drop:** Nodes can be dragged around to better explore the graph layout.
-        - **Zoom and Pan:** The D3.js graph supports zooming in/out and panning across the graph to dynamically explore different areas.
-        - **Branch Colors:**
-            - **Yellow:** Branches connecting all the PARENT nodes for the selected node.
-            - **Blue:** Branches connecting all the CHILDREN nodes for the selected node.
-
-        **Controls:**
-        - Adjust the levels using the side panel to dynamically update the displayed graph.
-        - Use the search bars to refine the view based on node names and the number of parent/child nodes displayed.
-
-        **Additional Features:**
-        - **Auto-filling Search:** Search bars feature auto-fill suggestions to make finding nodes easier.
-        - **Arrow Direction:** The direction of the arrows in the graph is set from the lowest node to the top, showing the hierarchy flow clearly.
-                    
-        ### How to Use the Interactive Graph Visualization Tool:
-        1. **Start the Application:**
-        - Launch the app by running the `streamlit run src/main.py` command in your terminal.
-        2. **Input Your Search Criteria:**
-        - Use the search bars on the side panel to specify your search preferences:
-            - **Unique Name:** Type the name of the node you want to focus on.
-            - **Number of Parent Levels:** Specify how many parent nodes (ancestors) to display for the selected node.
-            - **Number of Children Levels:** Specify how many child nodes (descendants) to display for the selected node.
-        3. **Interact with the Graph:**
-        - Click on nodes to see their descriptions.
-        - Use the side panel to adjust the view dynamically by changing the number of displayed parent and child nodes.
-        - Hover, drag, and zoom to explore the graph interactively.
-
-        Enjoy exploring your data with this interactive tool!
+        Enjoy exploring the hierarchical data with the interactive visualization tool!
         """)
