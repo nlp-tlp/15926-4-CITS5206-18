@@ -233,16 +233,11 @@ def display_d3js_plot(data, search_term, parent_limit, children_limit):
             })
             .style("fill", d => d.data.color || "#69b3a2")
             .on("click", function(event, d) {
-                // To display node description
                 const floatingBar = window.parent.document.getElementById('sidebarFloatingBar');
                 floatingBar.innerHTML = d.data.description ? escapeHtml(d.data.description) : "No description available.";
                 floatingBar.style.display = 'block';
-
-                //To display node types information
-                const nodeType = window.parent.document.getElementById('nodeType');
-                nodeType.innerHTML = d.data.types ? escapeHtml(d.data.types) : "No Information available.";
-                nodeType.style.display = 'block';
             })
+    
             .on("mouseover", function(event, d) {
                 if (d.data.name !== "Superclasses" && d.data.name !== "Subclasses") {
                     d3.select(this).transition()
@@ -261,9 +256,19 @@ def display_d3js_plot(data, search_term, parent_limit, children_limit):
                         .duration(200)
                         .attr("r", 10);  // Revert to original radius only for other nodes
                 }
+                const tooltip = d3.select("#tooltip");
+                tooltip.style("display", "none");  // Hide the tooltip when the mouse moves away
             });
 
-            // Labels
+            // Function to truncate node names if they are too long and append "..."
+            function truncateNodeName(name, maxLength = 35) {
+                if (name.length > maxLength) {
+                    return name.substring(0, maxLength - 25) + "...";
+                }
+                return name;
+            }
+
+            // Update labels to display truncated names and show full name on hover
             svg.selectAll('text')
                 .data(root.descendants())
                 .enter()
@@ -277,7 +282,10 @@ def display_d3js_plot(data, search_term, parent_limit, children_limit):
                 .style("font-weight", "bold")
                 .style("overflow", "visible")  // Allow text to extend beyond its box
                 .style("text-transform", d => (d.data.name === "Superclasses" || d.data.name === "Subclasses") ? "uppercase" : "none")
-                .text(d => d.data.name);
+                .text(d => truncateNodeName(d.data.name))  // Truncate the name if it's too long
+                .append("title")  // Tooltip with the full name on hover
+                .text(d => d.data.name);  // Show full name on hover
+
         </script>
         """, 
         height=1000
