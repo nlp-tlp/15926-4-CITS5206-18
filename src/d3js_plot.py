@@ -99,7 +99,7 @@ def display_d3js_plot(data, search_term, parent_limit, children_limit):
     # Display the D3.js graph with node descriptions on click, arrows on links, curved lines, a popup animation on hover, and panning/zooming
     components.html(
         """
-        <div id="d3-container" style="height: 1000px;"></div>
+        <div id="d3-container" style="height: 1000px; overflow: auto;"></div>
         <div id="tooltip" style="position: absolute; display: none; background: #fff; border: 1px solid #ccc; padding: 10px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1);"></div>
         <script src="https://d3js.org/d3.v7.min.js"></script>
         <script>
@@ -108,8 +108,10 @@ def display_d3js_plot(data, search_term, parent_limit, children_limit):
             const width = """ + str(width) + """;
             const height = """ + str(height) + """;
 
-            const treeLayout = d3.tree().size([height, width]);
-
+            const nodeWidth = 400;  // Space between nodes horizontally
+            const nodeHeight = 40; // Space between nodes vertically
+            // Define the tree layout using node size, not fixed width/height
+            const treeLayout = d3.tree().nodeSize([nodeHeight, nodeWidth]);          
             const root = d3.hierarchy(data);
 
             treeLayout(root);
