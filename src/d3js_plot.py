@@ -99,7 +99,7 @@ def display_d3js_plot(data, search_term, parent_limit, children_limit):
     # Display the D3.js graph with node descriptions on click, arrows on links, curved lines, a popup animation on hover, and panning/zooming
     components.html(
         """
-        <div id="d3-container" style="height: 1000px; overflow: auto;"></div>
+        <div id="d3-container" style="height: 1000px;"></div>
         <div id="tooltip" style="position: absolute; display: none; background: #fff; border: 1px solid #ccc; padding: 10px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1);"></div>
         <script src="https://d3js.org/d3.v7.min.js"></script>
         <script>
@@ -108,10 +108,9 @@ def display_d3js_plot(data, search_term, parent_limit, children_limit):
             const width = """ + str(width) + """;
             const height = """ + str(height) + """;
 
-            const nodeWidth = 400;  // Space between nodes horizontally
-            const nodeHeight = 40; // Space between nodes vertically
-            // Define the tree layout using node size, not fixed width/height
-            const treeLayout = d3.tree().nodeSize([nodeHeight, nodeWidth]);          
+            // Set the fixed node size (width and height) and spacing between nodes
+            const treeLayout = d3.tree().nodeSize([50, 400]);
+
             const root = d3.hierarchy(data);
 
             treeLayout(root);
@@ -124,6 +123,42 @@ def display_d3js_plot(data, search_term, parent_limit, children_limit):
                 }))
                 .append("g")
                 .attr("transform", "translate(100,100)");
+
+            // Offset function to avoid label overlap
+            function avoidLabelOverlap(node, i, nodes) {
+                let x = node.y;
+                let y = node.x;
+
+                // Iterate over previous nodes
+                for (let j = 0; j < i; j++) {
+                    let prevNode = nodes[j];
+
+                    // Check if the previous node is too close to the current node
+                    if (Math.abs(prevNode.x - y) < 20 && Math.abs(prevNode.y - x) < 100) {
+                        // Adjust the y position to avoid overlap
+                        y = prevNode.x + 30;  // 30 is a pixel offset
+                    }
+                }
+                return { x: x, y: y };
+            }
+
+            // Apply the offset to text labels
+            svg.selectAll('text')
+                .data(root.descendants())
+                .enter()
+                .append('text')
+                .attr('x', (d, i) => avoidLabelOverlap(d, i, root.descendants()).x + 15)
+                .attr('y', (d, i) => avoidLabelOverlap(d, i, root.descendants()).y + 5)
+                .attr('dy', -10)
+                .attr('text-anchor', 'start')
+                .style("font-size", "20px")
+                .style("fill", "black")
+                .style("font-weight", "bold")
+                .style("overflow", "visible")  // Allow text to extend beyond its box
+                .style("text-transform", d => (d.data.name === "Superclasses" || d.data.name === "Subclasses") ? "uppercase" : "none")
+                .text(d => truncateNodeName(d.data.name))
+                .append("title")
+                .text(d => d.data.name);
 
             // Define the arrowhead marker
             svg.append("defs").append("marker")
@@ -138,7 +173,7 @@ def display_d3js_plot(data, search_term, parent_limit, children_limit):
                 .attr("d", "M 0 0 L 10 5 L 0 10 z")
                 .style("fill", "#ccc");
 
-            // Links with arrows and curved lines
+    // Links with arrows and curved lines
     svg.selectAll('path.link')
         .data(root.links())
         .enter().append('path')
@@ -221,46 +256,46 @@ def display_d3js_plot(data, search_term, parent_limit, children_limit):
 
             // Nodes with popup animation on hover and drag behavior
             const node = svg.selectAll('circle')
-            .data(root.descendants())
-            .enter()
-            .append('circle')
-            .attr('cx', d => d.y)
-            .attr('cy', d => d.x)
-            .attr('r', d => {
-                if (d.data.name === "Superclasses" || d.data.name === "Subclasses") {
-                    return 20;  // Larger radius for "Superclasses" and "Subclasses"
-                } else {
-                    return 10;  // Default radius for other nodes
-                }
-            })
-            .style("fill", d => d.data.color || "#69b3a2")
-            .on("click", function(event, d) {
-                const floatingBar = window.parent.document.getElementById('sidebarFloatingBar');
-                floatingBar.innerHTML = d.data.description ? escapeHtml(d.data.description) : "No description available.";
-                floatingBar.style.display = 'block';
-            })
-    
-            .on("mouseover", function(event, d) {
-                if (d.data.name !== "Superclasses" && d.data.name !== "Subclasses") {
-                    d3.select(this).transition()
-                        .duration(200)
-                        .attr("r", 20);  // Increase radius on hover only for other nodes
-                }
-                const tooltip = d3.select("#tooltip");
-                tooltip.style("display", "block")
-                    .html(d.data.description ? escapeHtml(d.data.description) : "No description available.")
-                    .style("left", (event.pageX + 10) + "px")
-                    .style("top", (event.pageY + 10) + "px");
-            })
-            .on("mouseout", function(event, d) {
-                if (d.data.name !== "Superclasses" && d.data.name !== "Subclasses") {
-                    d3.select(this).transition()
-                        .duration(200)
-                        .attr("r", 10);  // Revert to original radius only for other nodes
-                }
-                const tooltip = d3.select("#tooltip");
-                tooltip.style("display", "none");  // Hide the tooltip when the mouse moves away
-            });
+                .data(root.descendants())
+                .enter()
+                .append('circle')
+                .attr('cx', d => d.y)
+                .attr('cy', d => d.x)
+                .attr('r', d => {
+                    if (d.data.name === "Superclasses" || d.data.name === "Subclasses") {
+                        return 20;  // Larger radius for "Superclasses" and "Subclasses"
+                    } else {
+                        return 10;  // Default radius for other nodes
+                    }
+                })
+                .style("fill", d => d.data.color || "#69b3a2")
+                .on("click", function(event, d) {
+                    const floatingBar = window.parent.document.getElementById('sidebarFloatingBar');
+                    floatingBar.innerHTML = d.data.description ? escapeHtml(d.data.description) : "No description available.";
+                    floatingBar.style.display = 'block';
+                })
+        
+                .on("mouseover", function(event, d) {
+                    if (d.data.name !== "Superclasses" && d.data.name !== "Subclasses") {
+                        d3.select(this).transition()
+                            .duration(200)
+                            .attr("r", 20);  // Increase radius on hover only for other nodes
+                    }
+                    const tooltip = d3.select("#tooltip");
+                    tooltip.style("display", "block")
+                        .html(d.data.description ? escapeHtml(d.data.description) : "No description available.")
+                        .style("left", (event.pageX + 10) + "px")
+                        .style("top", (event.pageY + 10) + "px");
+                })
+                .on("mouseout", function(event, d) {
+                    if (d.data.name !== "Superclasses" && d.data.name !== "Subclasses") {
+                        d3.select(this).transition()
+                            .duration(200)
+                            .attr("r", 10);  // Revert to original radius only for other nodes
+                    }
+                    const tooltip = d3.select("#tooltip");
+                    tooltip.style("display", "none");  // Hide the tooltip when the mouse moves away
+                });
 
             // Function to truncate node names if they are too long and append "..."
             function truncateNodeName(name, maxLength = 35) {
