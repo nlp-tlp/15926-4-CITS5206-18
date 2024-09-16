@@ -1,0 +1,65 @@
+[
+    {
+        "uniqueName": "AllDifferent",
+        "superclasses": "",
+        "subclasses": "",
+        "description": "",
+        "types": ""
+    },
+    {
+        "uniqueName": "AnnotationProperty",
+        "superclasses": "",
+        "subclasses": "",
+        "description": "",
+        "types": ""
+    },
+    {
+        "uniqueName": "DataRange",
+        "superclasses": "",
+        "subclasses": "",
+        "description": "",
+        "types": ""
+    },
+    {
+        "uniqueName": "DatatypeProperty",
+        "superclasses": "",
+        "subclasses": "",
+        "description": "",
+        "types": ""
+    },
+    {
+        "uniqueName": "DeprecatedClass",
+        "superclasses": "",
+        "subclasses": "",
+        "description": "",
+        "types": ""
+    },
+    {
+        "uniqueName": "DeprecatedProperty",
+        "superclasses": "",
+        "subclasses": "",
+        "description": "",
+        "types": ""
+    },
+    {
+        "uniqueName": "FunctionalProperty",
+        "superclasses": "",
+        "subclasses": "",
+        "description": "",
+        "types": ""
+    },
+    {
+        "uniqueName": "Ontology",
+        "superclasses": "",
+        "subclasses": "",
+        "description": "",
+        "types": ""
+    },
+    {
+        "uniqueName": "OntologyProperty",
+        "superclasses": "",
+        "subclasses": "",
+        "description": "",
+        "types": ""
+    }
+]
