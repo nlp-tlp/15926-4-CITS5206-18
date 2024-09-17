@@ -298,9 +298,9 @@ def display_d3js_plot(data, search_term, parent_limit, children_limit):
                 });
 
             // Function to truncate node names if they are too long and append "..."
-            function truncateNodeName(name, maxLength = 35) {
+            function truncateNodeName(name, maxLength = 25) {
                 if (name.length > maxLength) {
-                    return name.substring(0, maxLength - 25) + "...";
+                    return name.substring(0, maxLength - 15) + "...";
                 }
                 return name;
             }
