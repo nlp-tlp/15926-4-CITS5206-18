@@ -10,7 +10,7 @@ def display_networkx_plot(data, search_term, parent_limit, children_limit):
     """Display the NetworkX plot with user-defined parameters."""
     
     # Header for the NetworkX Plot section
-    st.header("NetworkX Plot")
+    st.header("Network Plot")
 
     # Create a directed graph
     G = nx.DiGraph()
@@ -21,25 +21,23 @@ def display_networkx_plot(data, search_term, parent_limit, children_limit):
         superclasses = item['superclasses'].split(', ') if 'superclasses' in item and item['superclasses'] else []
         subclasses = item['subclasses'].split(', ') if 'subclasses' in item and item['subclasses'] else []
         description = str(item['description']) if 'description' in item and item['description'] else ""
-        types = str(item['types']) if 'types' in item and item['types'] else ""
-             
 
         # Add node to the graph with description as tooltip
-        G.add_node(unique_name, title=description, types = types)
+        G.add_node(unique_name, title=description)
 
         # Add edges for superclasses and subclasses
         for superclass in superclasses:
             if superclass:
                 G.add_node(superclass)
-                G.add_edge(unique_name, superclass)  # Correct direction: node to superclass
+                G.add_edge(superclass, unique_name)  # Correct direction: node to superclass
 
         for subclass in subclasses:
             if subclass:
                 G.add_node(subclass)
-                G.add_edge(subclass, unique_name)  # Correct direction: subclass to node
+                G.add_edge(unique_name, subclass)  # Correct direction: subclass to node
 
     # Initialize PyVis network graph with white background and black text
-    net = Network(height="1000px", width="100%", bgcolor="white", font_color="black", directed=True)
+    net = Network(height="1000px", width="100%", bgcolor="#ffffff", font_color="black", directed=True)
 
     # Filtering logic for displaying nodes up to specified parent and child levels from the search term
     if search_term and search_term in G:
@@ -96,7 +94,7 @@ def display_networkx_plot(data, search_term, parent_limit, children_limit):
     # Convert graph to JSON for JavaScript interactions
     graph_data = json_graph.node_link_data(G)
     graph_json = json.dumps(graph_data)
-    
+
     # JavaScript for handling node clicks in NetworkX Plot
     components.html(f"""
         {graph_html}  <!-- Embed PyVis graph -->
@@ -113,19 +111,10 @@ def display_networkx_plot(data, search_term, parent_limit, children_limit):
             // Function to handle node clicks
             function nodeClick(nodeId) {{
                 const node = graphData.nodes.find(n => n.id === nodeId);
-
-                // To display node description
                 const nodeTitle = node.title;
                 const floatingBar = window.parent.document.getElementById('sidebarFloatingBar');
                 floatingBar.innerHTML = nodeTitle ? escapeHtml(nodeTitle) : "No description available.";
                 floatingBar.style.display = 'block';
-
-                // To display node types information
-                const nodetypes = node.types;
-                const nodeType = window.parent.document.getElementById('nodeType');
-                nodeType.innerHTML = nodetypes ? escapeHtml(nodetypes) : "No Information available.";
-                nodeType.style.display = 'block';
-                
             }}
 
             // Access the network instance and set up click event
