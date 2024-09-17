@@ -273,6 +273,11 @@ def display_d3js_plot(data, search_term, parent_limit, children_limit):
                     const floatingBar = window.parent.document.getElementById('sidebarFloatingBar');
                     floatingBar.innerHTML = d.data.description ? escapeHtml(d.data.description) : "No description available.";
                     floatingBar.style.display = 'block';
+
+                    //To display node types information
+                    const nodeType = window.parent.document.getElementById('nodeType');
+                    nodeType.innerHTML = d.data.types ? escapeHtml(d.data.types) : "No Information available.";
+                    nodeType.style.display = 'block';
                 })
         
                 .on("mouseover", function(event, d) {
