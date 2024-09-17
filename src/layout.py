@@ -33,6 +33,23 @@ def add_custom_css():
             padding: 10px 0;
             z-index: 99;
         }
+            
+        /* Enhance button styling */
+        .stButton>button {
+            width: 100%;
+            border-radius: 5px;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+        }
+        .stButton>button:hover {
+            background-color: #808080;
+            color: white;
+        }
+
+        /* Add a subtle box shadow to elements for depth */
+        .stTextInput>div>div>input, .stSelectbox>div>div>select {
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+        }
         </style>
         """,
         unsafe_allow_html=True
