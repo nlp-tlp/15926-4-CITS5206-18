@@ -21,52 +21,18 @@ add_footer()
 if 'page' not in st.session_state:
     st.session_state.page = "D3.js Plot"  # Default page
 
-# Add custom CSS for the sidebar logo and buttons
-st.markdown(
-    """
-    <style>
-    .sidebar-logo img {
-        width: 150px;  /* Adjust the size of the logo */
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-        margin-bottom: 20px;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
 # Add the logo to the sidebar using st.image
 st.sidebar.image("static/images/nlp-tlp-logo.png", width=130)
 
 # Create a sidebar header
 st.sidebar.header("Navigation")
 
-# Define sidebar layout with two buttons in a single row using HTML and CSS
-with st.sidebar:
-    st.markdown("""
-        <div style="display: flex; justify-content: space-between;">
-            <form action="#" method="get" style="flex: 1; margin-right: 5px;">
-                <button style="width: 100%;" type="submit" name="tree_plot">TREE Plot</button>
-            </form>
-            <form action="#" method="get" style="flex: 1; margin-left: 5px;">
-                <button style="width: 100%;" type="submit" name="network_plot">NETWORK Plot</button>
-            </form>
-        </div>
-    """, unsafe_allow_html=True)
-
-# Handle button clicks and query parameters
-query_params = st.query_params
-
-if "tree_plot" in query_params:
+# Revert to using Streamlit's native buttons
+if st.sidebar.button("TREE Plot"):
     st.session_state.page = "D3.js Plot"
-    #st.write("Displaying D3.js Plot")
 
-if "network_plot" in query_params:
+if st.sidebar.button("NETWORK Plot"):
     st.session_state.page = "NetworkX Plot"
-    #st.write("Displaying NetworkX Plot")
-
 
 # Construct absolute path to the JSON file
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -112,14 +78,12 @@ st.sidebar.header("Node Types")
 # Sidebar for displaying node types
 with st.sidebar:
     st.markdown("""
-        
         <div id="nodeType" style="
             background-color: #fff;
             color: black;
             padding: 10px;
             border-radius: 5px;
             display: none;">
-            
         </div>
         """, unsafe_allow_html=True)
 
