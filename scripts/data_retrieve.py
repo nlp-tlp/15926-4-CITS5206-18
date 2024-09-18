@@ -1,6 +1,8 @@
 import pandas as pd
 from SPARQLWrapper import SPARQLWrapper, JSON
 import json
+import os
+
 
 # Function to replace HTML entities like &lt; and &gt; with < and >
 def replace_html_entities(text):
@@ -155,12 +157,19 @@ for unique_name, info in filtered_out_data.items():
     })
 
 
+# Get the absolute path to the "data" directory relative to the script's location
+script_dir = os.path.dirname(os.path.abspath(__file__))  # Directory of the script
+data_dir = os.path.join(script_dir, "../data")  # Adjust path to the "data" directory
+
+# Ensure the "data" directory exists
+os.makedirs(data_dir, exist_ok=True)
+
 # Write the main output data to a JSON file
-with open("../data/final_output.json", "w") as json_file:
+with open(os.path.join(data_dir, "final_output.json"), "w") as json_file:
     json.dump(output_data, json_file, indent=4)
 
 # Write the filtered-out data to a separate JSON file
-with open("../data/filtered_out_data.json", "w") as filtered_file:
+with open(os.path.join(data_dir, "filtered_out_data.json"), "w") as filtered_file:
     json.dump(filtered_out_list, filtered_file, indent=4)
 
 print("Files successfully saved.")
