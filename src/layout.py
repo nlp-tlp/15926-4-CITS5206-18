@@ -21,17 +21,17 @@ def add_custom_css():
             opacity: 0.8;  /* Optional: adjust opacity */
         }
 
-        /* Style for the footer */
-        .footer {
-            position: fixed;
-            left: 0;
-            bottom: 0;
+       .stApp {
+            margin: 0;
+            padding: 0;
+        }
+        
+        .content-footer {
             width: 100%;
-            background-color: #f1f1f1;
             color: #000;
             text-align: center;
             padding: 10px 0;
-            z-index: 99;
+            margin-top: 20px;
         }
             
         /* Enhance button styling */
@@ -51,17 +51,6 @@ def add_custom_css():
             box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
         }
         </style>
-        """,
-        unsafe_allow_html=True
-    )
-
-def add_footer():
-    """Add footer with copyright information."""
-    st.markdown(
-        """
-        <div class="footer">
-            &copy;2024, Made For <b>"UWA NLP-TLP Group"</b>, Designed and Developed by <b>Manish Varada Reddy, Melo Xue, Shanmugapriya Sankarraj, Xudong Ying, Yu Xia, Zihan Zhang</b>.
-        </div>
         """,
         unsafe_allow_html=True
     )
@@ -108,3 +97,14 @@ def add_documentation_section():
         
         Enjoy exploring the hierarchical data with the interactive visualization tool!
         """)
+
+def end_main_content_wrapper():
+    """Close the main content wrapper and add the footer within the content area."""
+    st.markdown(
+        '''
+        <div class="content-footer">
+            &copy;2024, Made For <b>"UWA NLP-TLP Group"</b>, Designed and Developed by <b>Manish Varada Reddy, Melo Xue, Shanmugapriya Sankarraj, Xudong Ying, Yu Xia, Zihan Zhang</b>.
+        </div>
+        ''',
+        unsafe_allow_html=True
+    )

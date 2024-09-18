@@ -1,11 +1,12 @@
 import streamlit as st
-from layout import set_page_layout, add_custom_css, add_footer, add_documentation_section
+from layout import set_page_layout, add_custom_css, add_documentation_section, end_main_content_wrapper
 from data_handler import load_data, extract_unique_names
 from networkx_plot import display_networkx_plot
 from d3js_plot import display_d3js_plot
 import os
 from typing import List
 
+ # Search history functions
 def initialize_search_history() -> None:
     """Initialize the search history in the session state if it doesn't exist."""
     if 'search_history' not in st.session_state:
@@ -40,9 +41,6 @@ add_custom_css()
 
 # Add the documentation section
 add_documentation_section()
-
-# Add the footer with copyright information
-add_footer()
 
 # Initialize session state for page selection
 if 'page' not in st.session_state:
@@ -139,3 +137,6 @@ if st.session_state.page == "NetworkX Plot":
     display_networkx_plot(data, search_term, parent_limit, children_limit)
 elif st.session_state.page == "D3.js Plot":
     display_d3js_plot(data, search_term, parent_limit, children_limit)
+
+# Add footer
+end_main_content_wrapper()
