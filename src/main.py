@@ -83,7 +83,8 @@ if 'search_term' not in st.session_state:
 search_term = st.sidebar.selectbox(
     "Search by Unique Name", 
     unique_names,
-    index=unique_names.index(st.session_state.search_term) if st.session_state.search_term in unique_names else 0
+    index=unique_names.index(st.session_state.search_term) if st.session_state.search_term in unique_names else 0,
+    help="Enter or select a node name to focus on in the visualization."
 )
 
 # Update search history when a new search is performed
@@ -92,10 +93,24 @@ if search_term != st.session_state.search_term:
     st.session_state.search_term = search_term
 
 # Input for the number of parent levels to display
-parent_limit = st.sidebar.number_input("Number of Levels of Superclass", min_value=0, max_value=10, value=3, step=1)
+parent_limit = st.sidebar.number_input(
+    "Number of Levels of Superclass", 
+    min_value=0, 
+    max_value=10, 
+    value=3, 
+    step=1,
+    help="Specify how many levels of superclasses to display above the selected node."
+)
 
 # Input for the number of children levels to display
-children_limit = st.sidebar.number_input("Number of Levels of Subclass", min_value=0, max_value=10, value=3, step=1)
+children_limit = st.sidebar.number_input(
+    "Number of Levels of Subclass", 
+    min_value=0, 
+    max_value=10, 
+    value=3, 
+    step=1,
+    help="Specify how many levels of subclasses to display below the selected node."
+)
 
 # Header for Node description box
 st.sidebar.header("Node Description")
