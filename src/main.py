@@ -146,12 +146,48 @@ with st.sidebar:
 # Display search history after Node Types
 st.sidebar.header("Search History")
 display_search_history()
+    
+# Add a checkbox to enable comparative view
+enable_comparative = st.sidebar.checkbox("Enable Comparative View")
 
-# Display content based on the selected page
-if st.session_state.page == "NetworkX Plot":
-    display_networkx_plot(data, search_term, parent_limit, children_limit)
-elif st.session_state.page == "D3.js Plot":
-    display_d3js_plot(data, search_term, parent_limit, children_limit)
+if enable_comparative:
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        search_term1 = st.selectbox(
+            "Select First Node",
+            unique_names,
+            key="search1",
+            help="Select the first node for comparison"
+        )
+    
+    with col2:
+        search_term2 = st.selectbox(
+            "Select Second Node",
+            unique_names,
+            key="search2",
+            help="Select the second node for comparison"
+        )
+
+if enable_comparative:
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        if st.session_state.page == "D3.js Plot":
+            display_d3js_plot(data, search_term1, parent_limit, children_limit)
+        else:
+            display_networkx_plot(data, search_term1, parent_limit, children_limit)
+    
+    with col2:
+        if st.session_state.page == "D3.js Plot":
+            display_d3js_plot(data, search_term2, parent_limit, children_limit)
+        else:
+            display_networkx_plot(data, search_term2, parent_limit, children_limit)
+else:
+    if st.session_state.page == "NetworkX Plot":
+        display_networkx_plot(data, search_term, parent_limit, children_limit)
+    elif st.session_state.page == "D3.js Plot":
+        display_d3js_plot(data, search_term, parent_limit, children_limit)
 
 # Add footer
 end_main_content_wrapper()
