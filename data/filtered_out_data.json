@@ -61,5 +61,131 @@
         "subclasses": "",
         "description": "",
         "types": ""
+    },
+    {
+        "uniqueName": "allValuesFrom",
+        "superclasses": "",
+        "subclasses": "",
+        "description": "",
+        "types": ""
+    },
+    {
+        "uniqueName": "cardinality",
+        "superclasses": "",
+        "subclasses": "",
+        "description": "",
+        "types": ""
+    },
+    {
+        "uniqueName": "complementOf",
+        "superclasses": "",
+        "subclasses": "",
+        "description": "",
+        "types": ""
+    },
+    {
+        "uniqueName": "differentFrom",
+        "superclasses": "",
+        "subclasses": "",
+        "description": "",
+        "types": ""
+    },
+    {
+        "uniqueName": "disjointWith",
+        "superclasses": "",
+        "subclasses": "",
+        "description": "",
+        "types": ""
+    },
+    {
+        "uniqueName": "distinctMembers",
+        "superclasses": "",
+        "subclasses": "",
+        "description": "",
+        "types": ""
+    },
+    {
+        "uniqueName": "equivalentClass",
+        "superclasses": "",
+        "subclasses": "",
+        "description": "",
+        "types": ""
+    },
+    {
+        "uniqueName": "equivalentProperty",
+        "superclasses": "",
+        "subclasses": "",
+        "description": "",
+        "types": ""
+    },
+    {
+        "uniqueName": "hasValue",
+        "superclasses": "",
+        "subclasses": "",
+        "description": "",
+        "types": ""
+    },
+    {
+        "uniqueName": "intersectionOf",
+        "superclasses": "",
+        "subclasses": "",
+        "description": "",
+        "types": ""
+    },
+    {
+        "uniqueName": "inverseOf",
+        "superclasses": "",
+        "subclasses": "",
+        "description": "",
+        "types": ""
+    },
+    {
+        "uniqueName": "maxCardinality",
+        "superclasses": "",
+        "subclasses": "",
+        "description": "",
+        "types": ""
+    },
+    {
+        "uniqueName": "minCardinality",
+        "superclasses": "",
+        "subclasses": "",
+        "description": "",
+        "types": ""
+    },
+    {
+        "uniqueName": "onProperty",
+        "superclasses": "",
+        "subclasses": "",
+        "description": "",
+        "types": ""
+    },
+    {
+        "uniqueName": "oneOf",
+        "superclasses": "",
+        "subclasses": "",
+        "description": "",
+        "types": ""
+    },
+    {
+        "uniqueName": "sameAs",
+        "superclasses": "",
+        "subclasses": "",
+        "description": "",
+        "types": ""
+    },
+    {
+        "uniqueName": "someValuesFrom",
+        "superclasses": "",
+        "subclasses": "",
+        "description": "",
+        "types": ""
+    },
+    {
+        "uniqueName": "unionOf",
+        "superclasses": "",
+        "subclasses": "",
+        "description": "",
+        "types": ""
     }
 ]
