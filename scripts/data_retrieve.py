@@ -123,8 +123,9 @@ while more_data:
         if not super_class_name and not sub_class_name and not description and not type_name:
             # Add to filtered_out_data and skip adding to main data
             filtered_out_data[unique_name] = {
-                "superClasses": super_class_name,
-                "subClasses": sub_class_name,
+                "uniqueName": unique_name,
+                "superclasses": super_class_name,
+                "subclasses": sub_class_name,
                 "description": description,
                 "types": type_name
             }
@@ -133,6 +134,7 @@ while more_data:
         # Initialize data for the uniqueName if it hasn't been added yet
         if unique_name not in data:
             data[unique_name] = {
+                "uniqueName": unique_name,
                 "superClasses": set(),    # Set to store unique superClass names
                 "subClasses": set(),      # Set to store unique subClass names
                 "description": description,  # The description of the class
@@ -156,28 +158,27 @@ while more_data:
 # Step 2: Prepare the data for output
 print("Preparing data for output...")
 
-output_data = []
+# Convert the data dictionary to a list for sorting
+output_data = list(data.values())
 
-# Format the data for each uniqueName into a structured output format
-for unique_name, info in data.items():
-    output_data.append({
-        "uniqueName": unique_name,
-        "superclasses": ", ".join(info["superClasses"]),    # Convert set to comma-separated string
-        "subclasses": ", ".join(info["subClasses"]),        # Convert set to comma-separated string
-        "description": info["description"],                 # Use the description as it is
-        "types": ", ".join(info["types"])                   # Convert set to comma-separated string
-    })
+# Sort the output_data list alphabetically by 'uniqueName'
+# All entries starting with letters are listed first in alphabetical order.
+# Entries starting with numbers are listed after, also in numerical/alphabetical order.
+output_data.sort(key=lambda x: (
+    x["uniqueName"][0].isspace() or not x["uniqueName"][0].isalnum(),  # Special characters or blanks come last
+    x["uniqueName"][0].isdigit(),  # Numbers come after letters
+    x["uniqueName"].lower()  # Case-insensitive alphabetical sorting
+))
 
-# Prepare filtered-out data for writing
-filtered_out_list = []
-for unique_name, info in filtered_out_data.items():
-    filtered_out_list.append({
-        "uniqueName": unique_name,
-        "superclasses": info["superClasses"],
-        "subclasses": info["subClasses"],
-        "description": info["description"],
-        "types": info["types"]
-    })
+
+# Prepare filtered-out data for writing and sort it
+filtered_out_list = list(filtered_out_data.values())
+filtered_out_list.sort(key=lambda x: (
+    x["uniqueName"][0].isspace() or not x["uniqueName"][0].isalnum(),
+    x["uniqueName"][0].isdigit(),
+    x["uniqueName"].lower()
+))
+
 
 # Display the total counts
 total_entries = len(data) + len(filtered_out_data)
@@ -185,6 +186,14 @@ print(f"Total number of entries collected: {total_entries}")
 print(f"Number of entries with attributes: {len(output_data)}")
 print(f"Number of entries without attributes: {len(filtered_out_list)}")
 
+# Format the data entries for output
+for entry in output_data:
+    entry["superclasses"] = ", ".join(entry["superClasses"])
+    entry["subclasses"] = ", ".join(entry["subClasses"])
+    entry["types"] = ", ".join(entry["types"])
+    # Remove the set data structures as they are no longer needed
+    del entry["superClasses"]
+    del entry["subClasses"]
 
 # Write the main output data to a JSON file
 print("Writing main output data to 'final_output.json'...")
@@ -198,4 +207,5 @@ with open("data/filtered_out_data.json", "w", encoding='utf-8') as filtered_file
 
 print("Files successfully saved.")
 print("Data extraction completed successfully.")
+
 
