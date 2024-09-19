@@ -7,7 +7,28 @@
         "types": ""
     },
     {
+        "uniqueName": "allValuesFrom",
+        "superclasses": "",
+        "subclasses": "",
+        "description": "",
+        "types": ""
+    },
+    {
         "uniqueName": "AnnotationProperty",
+        "superclasses": "",
+        "subclasses": "",
+        "description": "",
+        "types": ""
+    },
+    {
+        "uniqueName": "cardinality",
+        "superclasses": "",
+        "subclasses": "",
+        "description": "",
+        "types": ""
+    },
+    {
+        "uniqueName": "complementOf",
         "superclasses": "",
         "subclasses": "",
         "description": "",
@@ -36,48 +57,6 @@
     },
     {
         "uniqueName": "DeprecatedProperty",
-        "superclasses": "",
-        "subclasses": "",
-        "description": "",
-        "types": ""
-    },
-    {
-        "uniqueName": "FunctionalProperty",
-        "superclasses": "",
-        "subclasses": "",
-        "description": "",
-        "types": ""
-    },
-    {
-        "uniqueName": "Ontology",
-        "superclasses": "",
-        "subclasses": "",
-        "description": "",
-        "types": ""
-    },
-    {
-        "uniqueName": "OntologyProperty",
-        "superclasses": "",
-        "subclasses": "",
-        "description": "",
-        "types": ""
-    },
-    {
-        "uniqueName": "allValuesFrom",
-        "superclasses": "",
-        "subclasses": "",
-        "description": "",
-        "types": ""
-    },
-    {
-        "uniqueName": "cardinality",
-        "superclasses": "",
-        "subclasses": "",
-        "description": "",
-        "types": ""
-    },
-    {
-        "uniqueName": "complementOf",
         "superclasses": "",
         "subclasses": "",
         "description": "",
@@ -119,6 +98,13 @@
         "types": ""
     },
     {
+        "uniqueName": "FunctionalProperty",
+        "superclasses": "",
+        "subclasses": "",
+        "description": "",
+        "types": ""
+    },
+    {
         "uniqueName": "hasValue",
         "superclasses": "",
         "subclasses": "",
@@ -154,6 +140,13 @@
         "types": ""
     },
     {
+        "uniqueName": "oneOf",
+        "superclasses": "",
+        "subclasses": "",
+        "description": "",
+        "types": ""
+    },
+    {
         "uniqueName": "onProperty",
         "superclasses": "",
         "subclasses": "",
@@ -161,7 +154,14 @@
         "types": ""
     },
     {
-        "uniqueName": "oneOf",
+        "uniqueName": "Ontology",
+        "superclasses": "",
+        "subclasses": "",
+        "description": "",
+        "types": ""
+    },
+    {
+        "uniqueName": "OntologyProperty",
         "superclasses": "",
         "subclasses": "",
         "description": "",
