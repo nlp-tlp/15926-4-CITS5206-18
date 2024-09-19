@@ -13,6 +13,14 @@ This project is an interactive visualization tool for the ISO 15926-4 standard, 
   - [Contributing](#contributing)
   - [Copyright](#copyright)
 
+## Data Retrieval
+
+To retrieve the latest DATA from the ENDPOINT:
+
+```bash
+   python3 scripts/data_retrieve.py
+   ```
+
 ## Installation
 
 To run this project locally, follow these steps:
