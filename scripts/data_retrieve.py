@@ -6,59 +6,62 @@ import json
 def replace_html_entities(text):
     return text.replace('&lt;', '<').replace('&gt;', '>')
 
+# Start of the script
+print("Starting data extraction...")
+
 # Define the SPARQL endpoint where queries will be sent
 sparql = SPARQLWrapper("http://190.92.134.58:8890/sparql")
-
-# List of prefixes to divide the queries (A-Z and 0-9), which allows querying in subsets
-# We choose to fetch data in alphabetical order due to the endpoint's output limitations.
-prefixes = [chr(i) for i in range(ord('A'), ord('Z')+1)] + [str(i) for i in range(0, 10)]  # A-Z and 0-9
-
-# In the list below,manually add uniqueNames that you want to filter out (for exapmle, excluded_unique_names =['Absorber'])
-excluded_unique_names =[]
 
 # Dictionary to hold the combined results from all queries
 data = {}
 # Dictionary to hold the filtered out data for classes with no superclass, subclass, description, or type
 filtered_out_data = {}
 
-# Step 1: Query each subset of classes based on the prefix
-for prefix in prefixes:
-    # SPARQL query is constructed here for each prefix
+# Initialize pagination variables
+batch_size = 5000  # Adjust as needed based on endpoint limitations
+last_unique_name = ""  # For keyset pagination
+more_data = True  # Control variable for the pagination loop
+
+# Step 1: Query using pagination
+while more_data:
+    # Build the pagination filter based on the last uniqueName retrieved
+    if last_unique_name:
+        pagination_filter = f'FILTER (STR(?uniqueName) > "{last_unique_name}")'
+    else:
+        pagination_filter = ''  # No filter for the first batch
+
+    # Construct the SPARQL query with the pagination filter
     query = f"""
-    prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>   # Standard RDF schema prefix for class relationships
-    prefix skos: <http://www.w3.org/2004/02/skos/core#>    # SKOS (Simple Knowledge Organization System) prefix for definitions
-    prefix meta: <http://data.15926.org/meta/>             # Custom meta-data namespace for deprecation and other info
-    prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>  # Basic RDF syntax
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>   # Standard RDF schema prefix for class relationships
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>    # SKOS prefix for definitions
+    PREFIX meta: <http://data.15926.org/meta/>             # Custom meta-data namespace
+    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>  # Basic RDF syntax
 
     SELECT ?uniqueName ?superClassName ?description ?type ?subClassName
     WHERE {{
-      # Retrieve the label (name) of the class and bind it to ?uniqueName
+      # Retrieve the label (uniqueName) of the class
       ?class rdfs:label ?uniqueName .
       
-      # Filter the results to only include classes where the name starts with the current prefix (A-Z or 0-9)
-      FILTER (STRSTARTS(STR(?uniqueName), "{prefix}"))
+      {pagination_filter}  # Apply pagination filter if not the first batch
       
-      # Exclude any classes whose names match those in the excluded list (e.g., AllDifferent, AnnotationProperty, etc.)
-      FILTER (?uniqueName NOT IN ({', '.join([f'"{name}"' for name in excluded_unique_names])}))
-
-      # Optionally retrieve the definition of the class from SKOS (if it exists)
+      # Optionally retrieve the definition (description) of the class
       OPTIONAL {{
         ?class skos:definition ?description .
       }}
 
-      # Optionally retrieve the superclass of the class, if it has one
+      # Optionally retrieve the superclass name
       OPTIONAL {{
         ?class rdfs:subClassOf ?superClass .
         ?superClass rdfs:label ?superClassName .
       }}
 
-      # Optionally retrieve any subclasses of the class, if they exist
+      # Optionally retrieve the subclass name
       OPTIONAL {{
         ?subClass rdfs:subClassOf ?class .
         ?subClass rdfs:label ?subClassName .
       }}
 
-      # Optionally retrieve the type of the class if it is defined
+      # Optionally retrieve the type of the class
       OPTIONAL {{
         GRAPH ?coco {{
           ?class rdf:type ?cocoid .
@@ -66,13 +69,18 @@ for prefix in prefixes:
         ?cocoid rdfs:label ?type .
       }}
 
-      # Filter out any classes that have been marked as deprecated (using meta:valDeprecationDate)
+      # Filter out any classes that have been marked as deprecated
       FILTER (NOT EXISTS {{ ?class meta:valDeprecationDate ?xdt1 }})
       FILTER (NOT EXISTS {{ ?superClass meta:valDeprecationDate ?xdt2 }})
     }}
-    ORDER BY ?uniqueName   # Order the results by the uniqueName
+    ORDER BY ?uniqueName   # Order the results by uniqueName for consistent pagination
+    LIMIT {batch_size}
     """
-    
+
+    # Print progress information
+    print(f"Processing batch starting after '{last_unique_name}'")
+    print("Executing query...")
+
     # Set the query to the SPARQL endpoint and set the return format to JSON
     sparql.setQuery(query)
     sparql.setReturnFormat(JSON)
@@ -80,10 +88,24 @@ for prefix in prefixes:
     # Execute the query and get the results in JSON format
     results = sparql.query().convert()
     
-    # Process the results to extract useful information
-    for result in results["results"]["bindings"]:
+    # Extract the bindings (results) from the query response
+    bindings = results["results"]["bindings"]
+    num_results = len(bindings)
+    print(f"Retrieved {num_results} results")
+
+    # If no results are returned, we've reached the end of the data
+    if not bindings:
+        print("No more data to process.")
+        more_data = False
+        break
+
+    # Process each result in the current batch
+    for result in bindings:
         # Get the uniqueName (label) of the class
         unique_name = result["uniqueName"]["value"]
+        
+        # Update last_unique_name for the next batch
+        last_unique_name = unique_name
         
         # Get the description, if available
         description = replace_html_entities(result.get("description", {}).get("value", ""))
@@ -97,25 +119,24 @@ for prefix in prefixes:
         # Get the subClass name, if available
         sub_class_name = result.get("subClassName", {}).get("value", "")
 
-        
-        # Check if the class has no relevant data (i.e., empty superClass, subClass, description, or type)
-        # The purpose of this block is to ignore invalid data that don't have superclass, subclss,description and type
+        # Check if the class lacks all relevant data
         if not super_class_name and not sub_class_name and not description and not type_name:
+            # Add to filtered_out_data and skip adding to main data
             filtered_out_data[unique_name] = {
                 "superClasses": super_class_name,
                 "subClasses": sub_class_name,
                 "description": description,
                 "types": type_name
             }
-            continue  # Skip adding this to the main data
+            continue  # Skip to the next result
         
         # Initialize data for the uniqueName if it hasn't been added yet
         if unique_name not in data:
             data[unique_name] = {
-                "superClasses": set(),  # Set to store unique superClass names
-                "subClasses": set(),    # Set to store unique subClass names
+                "superClasses": set(),    # Set to store unique superClass names
+                "subClasses": set(),      # Set to store unique subClass names
                 "description": description,  # The description of the class
-                "types": set()          # Set to store unique types
+                "types": set()            # Set to store unique types
             }
         
         # Add the superClass name to the set (if it exists)
@@ -130,7 +151,11 @@ for prefix in prefixes:
         if type_name:
             data[unique_name]["types"].add(type_name)
 
+    print(f"Processed batch ending with '{last_unique_name}'")
+
 # Step 2: Prepare the data for output
+print("Preparing data for output...")
+
 output_data = []
 
 # Format the data for each uniqueName into a structured output format
@@ -139,11 +164,11 @@ for unique_name, info in data.items():
         "uniqueName": unique_name,
         "superclasses": ", ".join(info["superClasses"]),    # Convert set to comma-separated string
         "subclasses": ", ".join(info["subClasses"]),        # Convert set to comma-separated string
-        "description": info["description"],                # Use the description as it is
-        "types": ", ".join(info["types"])                  # Convert set to comma-separated string
+        "description": info["description"],                 # Use the description as it is
+        "types": ", ".join(info["types"])                   # Convert set to comma-separated string
     })
 
-# Prepare filtered-out data for writing. 
+# Prepare filtered-out data for writing
 filtered_out_list = []
 for unique_name, info in filtered_out_data.items():
     filtered_out_list.append({
@@ -154,13 +179,23 @@ for unique_name, info in filtered_out_data.items():
         "types": info["types"]
     })
 
+# Display the total counts
+total_entries = len(data) + len(filtered_out_data)
+print(f"Total number of entries collected: {total_entries}")
+print(f"Number of entries with attributes: {len(output_data)}")
+print(f"Number of entries without attributes: {len(filtered_out_list)}")
+
 
 # Write the main output data to a JSON file
-with open("../data/final_output.json", "w") as json_file:
-    json.dump(output_data, json_file, indent=4)
+print("Writing main output data to 'final_output.json'...")
+with open("data/final_output.json", "w", encoding='utf-8') as json_file:
+    json.dump(output_data, json_file, indent=4, ensure_ascii=False)
 
 # Write the filtered-out data to a separate JSON file
-with open("../data/filtered_out_data.json", "w") as filtered_file:
-    json.dump(filtered_out_list, filtered_file, indent=4)
+print("Writing filtered-out data to 'filtered_out_data.json'...")
+with open("data/filtered_out_data.json", "w", encoding='utf-8') as filtered_file:
+    json.dump(filtered_out_list, filtered_file, indent=4, ensure_ascii=False)
 
 print("Files successfully saved.")
+print("Data extraction completed successfully.")
+
