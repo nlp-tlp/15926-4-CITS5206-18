@@ -18,8 +18,8 @@ This project is an interactive visualization tool for the ISO 15926-4 standard, 
 To retrieve the latest DATA from the ENDPOINT:
 
 ```bash
-   python3 scripts/data_retrieve.py
-   ```
+python3 scripts/data_retrieve.py
+```
 
 ## Installation
 
