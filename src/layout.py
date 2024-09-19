@@ -25,15 +25,7 @@ def add_custom_css():
             margin: 0;
             padding: 0;
         }
-        
-        .content-footer {
-            width: 100%;
-            color: #000;
-            text-align: center;
-            padding: 10px 0;
-            margin-top: 20px;
-        }
-            
+
         /* Enhance button styling */
         .stButton>button {
             width: 100%;
@@ -49,6 +41,42 @@ def add_custom_css():
         /* Add a subtle box shadow to elements for depth */
         .stTextInput>div>div>input, .stSelectbox>div>div>select {
             box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+        }
+
+        /* Ensure the main content area takes up all available space */
+        .main .block-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding-bottom: 0;
+        }
+
+        /* Style for the footer */
+        .content-footer {
+            flex-shrink: 0;
+            color: #000;
+            text-align: center;
+            padding: 10px 0;
+            font-size: 14px;
+            width: 100%;
+            margin-top: 20px;
+            line-height: 1.4;
+        }
+
+        @media (max-width: 768px) {
+            .content-footer {
+                font-size: 12px;
+                white-space: normal;
+                word-wrap: break-word;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .content-footer {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
         }
         </style>
         """,
