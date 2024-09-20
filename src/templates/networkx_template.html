@@ -1,0 +1,30 @@
+{{ graph_html | safe }}  <!-- Embed PyVis graph -->
+
+<script type="text/javascript">
+    const graphData = {{ graph_json | safe }};  // Safely pass JSON data
+
+    // Function to escape HTML content in node description
+    function escapeHtml(content) {
+        const div = document.createElement('div');
+        div.textContent = content;
+        return div.innerHTML;
+    }
+
+    // Function to handle node clicks
+    function nodeClick(nodeId) {
+        const node = graphData.nodes.find(n => n.id === nodeId);
+        const nodeTitle = node.title;
+        const floatingBar = window.parent.document.getElementById('sidebarFloatingBar');
+        floatingBar.innerHTML = nodeTitle ? escapeHtml(nodeTitle) : "No description available.";
+        floatingBar.style.display = 'block';
+    }
+
+    // Access the network instance and set up click event
+    var network = window.network;
+    network.on("click", function(params) {
+        if (params.nodes.length > 0) {
+            var nodeId = params.nodes[0];
+            nodeClick(nodeId);
+        }
+    });
+</script>
