@@ -21,6 +21,11 @@ To retrieve the latest DATA from the ENDPOINT:
 ```bash
 python3 scripts/data_retrieve.py
 ```
+OR
+
+```bash
+python scripts/data_retrieve.py
+```
 
 ## Installation
 
