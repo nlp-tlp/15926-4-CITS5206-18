@@ -91,7 +91,7 @@ def add_documentation_section():
 
         ## **Graph Interaction Controls**
         1. **Network Plot**:
-            - **Click on Nodes**: Displays the node’s description in the sidebar.
+            - **Click on Nodes**: Displays the node’s description and node type in the sidebar.
             - **Hover Effects**: Hovering on a node shows a tooltip with the node’s name and description.
             - **Node Colors**:
                 - **Red**: Focus node.
@@ -118,6 +118,13 @@ def add_documentation_section():
             - Click on nodes for descriptions.
             - Use the side panel to dynamically change the displayed number of superclass and subclass nodes.
             - Drag, zoom, and pan to explore the hierarchical relationships.
+        4. **Search History**:
+            - The search history is displayed in the sidebar.
+            - Click on a history item to restore the previous search state.
+        5. **Enable Comparative Analysis**:
+            - Use the `Enable Comparative` button to enable the comparative analysis mode.
+            - Select two nodes to compare their hierarchical relationships.
+            - The nodes are highlighted in the graph for easy comparison.
         
         Enjoy exploring the hierarchical data with the interactive visualization tool!
         """)
