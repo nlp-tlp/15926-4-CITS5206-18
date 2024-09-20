@@ -21,9 +21,13 @@ def display_networkx_plot(data, search_term, parent_limit, children_limit):
         superclasses = item['superclasses'].split(', ') if 'superclasses' in item and item['superclasses'] else []
         subclasses = item['subclasses'].split(', ') if 'subclasses' in item and item['subclasses'] else []
         description = str(item['description']) if 'description' in item and item['description'] else ""
+        types = str(item['types']) if 'types' in item and item['types'] else ""
 
         # Add node to the graph with description as tooltip
         G.add_node(unique_name, title=description)
+
+        # Add node types to the graph node
+        G.add_node(unique_name, types = types)
 
         # Add edges for superclasses and subclasses
         for superclass in superclasses:
@@ -115,6 +119,12 @@ def display_networkx_plot(data, search_term, parent_limit, children_limit):
                 const floatingBar = window.parent.document.getElementById('sidebarFloatingBar');
                 floatingBar.innerHTML = nodeTitle ? escapeHtml(nodeTitle) : "No description available.";
                 floatingBar.style.display = 'block';
+
+                // To display node types information
+                const nodetypes = node.types;
+                const nodeType = window.parent.document.getElementById('nodeType');
+                nodeType.innerHTML = nodetypes ? escapeHtml(nodetypes) : "No Information available.";
+                nodeType.style.display = 'block';
             }}
 
             // Access the network instance and set up click event
