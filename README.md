@@ -59,12 +59,14 @@ src/
 ├── data_handler.py             # Data loading functions
 ├── networkx_plot.py            # NetworkX plot visualization functions
 ├── d3js_plot.py                # D3.js plot visualization functions
+└── templates
+    ├── d3js_template.html      # Tree template
+    └── networkx_template.html  # Network template
 static/
-├── css/
-│   └── style.css
 └── images/
     └── nlp-tlp-logo.png
 data/
+├── filtered_out_data.jason     # Data including invalid nodes
 └── final_output.json           # Data source file
 requirements.txt                # List of dependencies
 README.md
@@ -84,7 +86,7 @@ To use the interactive visualization tool:
    - The search history is displayed in the sidebar.
    - Click on a history item to restore the previous search state.
 5. **Enable Comparative Analysis**:
-   - Use the `Compare` button to enable the comparative analysis mode.
+   - Use the `Enable Comparative` button to enable the comparative analysis mode.
    - Select two nodes to compare their hierarchical relationships.
    - The nodes are highlighted in the graph for easy comparison.
 
@@ -93,8 +95,11 @@ To use the interactive visualization tool:
 - **`main.py`**: The entry point of the application that initializes the Streamlit app and coordinates between different modules.
 - **`layout.py`**: Contains functions to set up the layout and styling of the Streamlit interface.
 - **`data_handler.py`**: Handles loading and processing of data from JSON files.
-- **`networkx_plot.py`**: Contains the logic for rendering the NetworkX plot and handling user interactions.
-- **`d3js_plot.py`**: Manages the D3.js plot rendering and data preparation.
+- **`networkx_plot.py`**: Contains the logic of handling user interactions for NetworkX plot.
+- **`d3js_plot.py`**: Manages the D3.js plot data preparation.
+- - **`networkx_template.html`**: Contains the logic for rendering the NetworkX plot.
+- **`d3js_template.html`**: Manages the D3.js plot rendering.
+
 
 ## Contributing
 
