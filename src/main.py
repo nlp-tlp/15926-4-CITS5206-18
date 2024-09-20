@@ -151,9 +151,11 @@ display_search_history()
 enable_comparative = st.sidebar.checkbox("Enable Comparative View")
 
 if enable_comparative:
+    # Create two columns for selecting nodes to compare
     col1, col2 = st.columns(2)
     
     with col1:
+        # Dropdown to select the first node
         search_term1 = st.selectbox(
             "Select First Node",
             unique_names,
@@ -162,6 +164,7 @@ if enable_comparative:
         )
     
     with col2:
+        # Dropdown to select the second node
         search_term2 = st.selectbox(
             "Select Second Node",
             unique_names,
@@ -170,20 +173,24 @@ if enable_comparative:
         )
 
 if enable_comparative:
+    # Create two columns for displaying comparative plots
     col1, col2 = st.columns(2)
     
     with col1:
+        # Display plot for the first selected node
         if st.session_state.page == "D3.js Plot":
             display_d3js_plot(data, search_term1, parent_limit, children_limit)
         else:
             display_networkx_plot(data, search_term1, parent_limit, children_limit)
     
     with col2:
+        # Display plot for the second selected node
         if st.session_state.page == "D3.js Plot":
             display_d3js_plot(data, search_term2, parent_limit, children_limit)
         else:
             display_networkx_plot(data, search_term2, parent_limit, children_limit)
 else:
+    # If comparative view is not enabled, display a single plot
     if st.session_state.page == "NetworkX Plot":
         display_networkx_plot(data, search_term, parent_limit, children_limit)
     elif st.session_state.page == "D3.js Plot":
