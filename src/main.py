@@ -1,37 +1,10 @@
 import streamlit as st
-from layout import set_page_layout, add_custom_css, add_documentation_section, end_main_content_wrapper
+from layout import set_page_layout, add_custom_css, add_documentation_section, end_main_content_wrapper, initialize_search_history, display_search_history, add_to_search_history
 from data_handler import load_data, extract_unique_names
 from networkx_plot import display_networkx_plot
 from d3js_plot import display_d3js_plot
 import os
 from typing import List
-
- # Search history functions
-def initialize_search_history() -> None:
-    """Initialize the search history in the session state if it doesn't exist."""
-    if 'search_history' not in st.session_state:
-        st.session_state.search_history = []
-
-def add_to_search_history(term: str, max_history: int = 5) -> None:
-    """
-    Add a search term to the history, maintaining the maximum number of entries.
-    
-    Args:
-    term (str): The search term to add to the history.
-    max_history (int): The maximum number of search terms to keep in history.
-    """
-    if term not in st.session_state.search_history:
-        st.session_state.search_history.append(term)
-        # Keep only the last 'max_history' searches
-        st.session_state.search_history = st.session_state.search_history[-max_history:]
-
-def display_search_history() -> None:
-    """Display the search history in the sidebar."""
-    st.sidebar.write("Recent Searches:")
-    for term in reversed(st.session_state.search_history):
-        if st.sidebar.button(f"🔍 {term}", key=f"history_{term}"):
-            # If a history item is clicked, update the search term
-            st.session_state.search_term = term
 
 # Set the page layout to wide
 set_page_layout()
