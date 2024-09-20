@@ -32,50 +32,53 @@ while more_data:
 
     # Construct the SPARQL query with the pagination filter
     query = f"""
-    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>   # Standard RDF schema prefix for class relationships
-    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>    # SKOS prefix for definitions
-    PREFIX meta: <http://data.15926.org/meta/>             # Custom meta-data namespace
-    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>  # Basic RDF syntax
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    PREFIX meta: <http://data.15926.org/meta/>
+    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 
     SELECT ?uniqueName ?superClassName ?description ?type ?subClassName
     WHERE {{
-      # Retrieve the label (uniqueName) of the class
-      ?class rdfs:label ?uniqueName .
-      
-      {pagination_filter}  # Apply pagination filter if not the first batch
-      
-      # Optionally retrieve the definition (description) of the class
-      OPTIONAL {{
-        ?class skos:definition ?description .
-      }}
-
-      # Optionally retrieve the superclass name
-      OPTIONAL {{
-        ?class rdfs:subClassOf ?superClass .
-        ?superClass rdfs:label ?superClassName .
-      }}
-
-      # Optionally retrieve the subclass name
-      OPTIONAL {{
-        ?subClass rdfs:subClassOf ?class .
-        ?subClass rdfs:label ?subClassName .
-      }}
-
-      # Optionally retrieve the type of the class
-      OPTIONAL {{
-        GRAPH ?coco {{
-          ?class rdf:type ?cocoid .
+      GRAPH <http://data.15926.org/rdl> {{
+        # Retrieve the label (uniqueName) of the class
+        ?class rdfs:label ?uniqueName .
+        
+        {pagination_filter}  # Apply pagination filter if not the first batch
+        
+        # Optionally retrieve the definition (description) of the class
+        OPTIONAL {{
+          ?class skos:definition ?description .
         }}
-        ?cocoid rdfs:label ?type .
-      }}
 
-      # Filter out any classes that have been marked as deprecated
-      FILTER (NOT EXISTS {{ ?class meta:valDeprecationDate ?xdt1 }})
-      FILTER (NOT EXISTS {{ ?superClass meta:valDeprecationDate ?xdt2 }})
+        # Optionally retrieve the superclass name
+        OPTIONAL {{
+          ?class rdfs:subClassOf ?superClass .
+          ?superClass rdfs:label ?superClassName .
+        }}
+
+        # Optionally retrieve the subclass name
+        OPTIONAL {{
+          ?subClass rdfs:subClassOf ?class .
+          ?subClass rdfs:label ?subClassName .
+        }}
+
+        # Optionally retrieve the type of the class
+        OPTIONAL {{
+          GRAPH ?coco {{
+            ?class rdf:type ?cocoid .
+          }}
+          ?cocoid rdfs:label ?type .
+        }}
+
+        # Filter out any classes that have been marked as deprecated
+        FILTER (NOT EXISTS {{ ?class meta:valDeprecationDate ?xdt1 }})
+        FILTER (NOT EXISTS {{ ?superClass meta:valDeprecationDate ?xdt2 }})
+      }}
     }}
-    ORDER BY ?uniqueName   # Order the results by uniqueName for consistent pagination
+    ORDER BY ?uniqueName
     LIMIT {batch_size}
     """
+
 
     # Print progress information
     print(f"Processing batch starting after '{last_unique_name}'")
