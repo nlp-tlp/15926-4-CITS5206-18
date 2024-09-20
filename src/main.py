@@ -83,7 +83,8 @@ if 'search_term' not in st.session_state:
 search_term = st.sidebar.selectbox(
     "Search by Unique Name", 
     unique_names,
-    index=unique_names.index(st.session_state.search_term) if st.session_state.search_term in unique_names else 0
+    index=unique_names.index(st.session_state.search_term) if st.session_state.search_term in unique_names else 0,
+    help="Enter or select a node name to focus on in the visualization."
 )
 
 # Update search history when a new search is performed
@@ -92,10 +93,24 @@ if search_term != st.session_state.search_term:
     st.session_state.search_term = search_term
 
 # Input for the number of parent levels to display
-parent_limit = st.sidebar.number_input("Number of Levels of Superclass", min_value=0, max_value=10, value=3, step=1)
+parent_limit = st.sidebar.number_input(
+    "Number of Levels of Superclass", 
+    min_value=0, 
+    max_value=10, 
+    value=3, 
+    step=1,
+    help="Specify how many levels of superclasses to display above the selected node."
+)
 
 # Input for the number of children levels to display
-children_limit = st.sidebar.number_input("Number of Levels of Subclass", min_value=0, max_value=10, value=3, step=1)
+children_limit = st.sidebar.number_input(
+    "Number of Levels of Subclass", 
+    min_value=0, 
+    max_value=10, 
+    value=3, 
+    step=1,
+    help="Specify how many levels of subclasses to display below the selected node."
+)
 
 # Header for Node description box
 st.sidebar.header("Node Description")
@@ -131,12 +146,76 @@ with st.sidebar:
 # Display search history after Node Types
 st.sidebar.header("Search History")
 display_search_history()
+    
+# Add a checkbox to enable comparative view
+enable_comparative = st.sidebar.checkbox("Enable Comparative View")
 
-# Display content based on the selected page
-if st.session_state.page == "NetworkX Plot":
-    display_networkx_plot(data, search_term, parent_limit, children_limit)
-elif st.session_state.page == "D3.js Plot":
-    display_d3js_plot(data, search_term, parent_limit, children_limit)
+if enable_comparative:
+    # Create two columns for selecting nodes to compare
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        # Dropdown to select the first node
+        search_term1 = st.selectbox(
+            "Select First Node",
+            unique_names,
+            key="search1",
+            help="Select the first node for comparison"
+        )
+    
+    with col2:
+        # Dropdown to select the second node
+        search_term2 = st.selectbox(
+            "Select Second Node",
+            unique_names,
+            key="search2",
+            help="Select the second node for comparison"
+        )
+
+    # Create two columns for selecting plot types to compare
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        # Dropdown to select the plot type for the first node
+        chart_type1 = st.selectbox(
+            "Select First Plot Type",
+            ["D3.js Plot", "NetworkX Plot"],
+            key="chart_type1",
+            help="Select the plot type for the first node"
+        )
+    
+    with col2:
+        # Dropdown to select the plot type for the second node
+        chart_type2 = st.selectbox(
+            "Select Second Plot Type",
+            ["D3.js Plot", "NetworkX Plot"],
+            key="chart_type2",
+            help="Select the plot type for the second node"
+        )
+
+    # Create two columns for displaying comparative plots
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        # Display plot for the first selected node based on the selected plot type
+        if chart_type1 == "D3.js Plot":
+            display_d3js_plot(data, search_term1, parent_limit, children_limit)
+        else:
+            display_networkx_plot(data, search_term1, parent_limit, children_limit)
+    
+    with col2:
+        # Display plot for the second selected node based on the selected plot type
+        if chart_type2 == "D3.js Plot":
+            display_d3js_plot(data, search_term2, parent_limit, children_limit)
+        else:
+            display_networkx_plot(data, search_term2, parent_limit, children_limit)
+
+else:
+    # If comparative view is not enabled, display a single plot
+    if st.session_state.page == "NetworkX Plot":
+        display_networkx_plot(data, search_term, parent_limit, children_limit)
+    elif st.session_state.page == "D3.js Plot":
+        display_d3js_plot(data, search_term, parent_limit, children_limit)
 
 # Add footer
 end_main_content_wrapper()

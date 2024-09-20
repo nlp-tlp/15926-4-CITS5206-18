@@ -6,7 +6,7 @@ def display_d3js_plot(data, search_term, parent_limit, children_limit):
     """Display the D3.js plot with user-defined parameters."""
     
     # Header for the D3.js Plot section
-    st.header("D3.js Plot")
+    st.header("Tree Plot")
 
     # Define a function to assign colors based on the level
     def get_color_by_level(level):
