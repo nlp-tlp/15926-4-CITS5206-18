@@ -91,7 +91,7 @@ def add_documentation_section():
 
         ## **Graph Interaction Controls**
         1. **Network Plot**:
-            - **Click on Nodes**: Displays the node’s description and node type in the sidebar.
+            - **Click on Nodes**: Displays the node’s description and node types in the sidebar.
             - **Hover Effects**: Hovering on a node shows a tooltip with the node’s name and description.
             - **Node Colors**:
                 - **Red**: Focus node.
@@ -99,7 +99,7 @@ def add_documentation_section():
                 - **Blue**: Subclass nodes.
 
         2. **Tree Plot**:
-            - **Click on Nodes**: Highlights the node and displays its description.
+            - **Click on Nodes**: Highlights the node, displays its description and node types.
             - **Drag and Drop**: Drag nodes to adjust their positions for better exploration.
             - **Zoom and Pan**: Supports zooming in/out and panning across the graph.
             - **Branch Colors**:
