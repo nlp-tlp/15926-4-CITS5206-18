@@ -109,6 +109,8 @@ def add_documentation_section():
         ## **How to Use the Tool**
         1. **Launch the Application**:
             - Run the app using the `streamlit run src/main.py` command.
+            - The app opens in your default web browser.
+            - Stop the app by pressing `Ctrl+C` in the terminal.
         2. **Input Search Criteria**:
             - **Unique Name**: Focus on a specific node by entering its name.
             - **Superclass/Subclass Levels**: Adjust the number of superclass/subclass nodes to display.

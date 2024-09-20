@@ -4,7 +4,7 @@ import streamlit as st
 def load_data(json_path):
     """Load data from a JSON file."""
     try:
-        with open(json_path) as json_file:
+        with open(json_path, 'r', encoding='utf-8') as json_file:
             data = json.load(json_file)
         return data
     except FileNotFoundError:

@@ -6,6 +6,7 @@ This project is an interactive visualization tool for the ISO 15926-4 standard, 
 
 - [Project Name: Interactive Visualization Tool for ISO 15926-4 Standard](#project-name-interactive-visualization-tool-for-iso-15926-4-standard)
   - [Table of Contents](#table-of-contents)
+  - [Data Retrieval](#data-retrieval)
   - [Installation](#installation)
   - [Project Structure](#project-structure)
   - [Usage](#usage)
@@ -43,6 +44,11 @@ To run this project locally, follow these steps:
    ```bash
    streamlit run src/main.py
    ```
+4. **Stop the Streamlit Application:**
+
+   ```bash
+   Control + C
+   ```
 
 ## Project Structure
 
@@ -72,9 +78,15 @@ To use the interactive visualization tool:
 2. **Navigate between visualizations**:
    - **NetworkX Plot**: Visualize relationships using NetworkX. Click on nodes to display definitions in the sidebar. Hover over nodes to see tooltips.
    - **D3.js Plot**: Explore hierarchical data relationships using a D3.js tree visualization.
-
 3. **Search and Filter Options**:
    - Use the sidebar to search for specific nodes and adjust the number of parent and child levels displayed in the visualization.
+4. **Search History**:
+   - The search history is displayed in the sidebar.
+   - Click on a history item to restore the previous search state.
+5. **Enable Comparative Analysis**:
+   - Use the `Compare` button to enable the comparative analysis mode.
+   - Select two nodes to compare their hierarchical relationships.
+   - The nodes are highlighted in the graph for easy comparison.
 
 ## Modules
 
