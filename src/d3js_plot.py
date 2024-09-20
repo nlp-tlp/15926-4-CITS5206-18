@@ -100,7 +100,7 @@ def display_d3js_plot(data, search_term, parent_limit, children_limit):
     components.html(
         """
         <div id="d3-container" style="height: 1000px;"></div>
-        <div id="tooltip" style="position: absolute; display: none; background: #fff; border: 1px solid #ccc; padding: 10px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1);"></div>
+        <div id="tooltip" style="position: absolute; display: autoflow; background: #fff; border: 1px solid #ccc; padding: 10px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1);"></div>
         <script src="https://d3js.org/d3.v7.min.js"></script>
         <script>
             const data = """ + hierarchical_data_json + """;
@@ -122,9 +122,8 @@ def display_d3js_plot(data, search_term, parent_limit, children_limit):
                     svg.attr("transform", event.transform);
                 }))
                 .append("g")
-                .attr("transform", "translate(100,100)");
 
-            // Offset function to avoid label overlap
+                
             function avoidLabelOverlap(node, i, nodes) {
                 let x = node.y;
                 let y = node.x;

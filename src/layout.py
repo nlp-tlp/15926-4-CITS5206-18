@@ -5,35 +5,64 @@ def set_page_layout():
     st.set_page_config(layout="wide")
 
 def add_custom_css():
-    """Add custom CSS for positioning the logo and footer."""
+    """Add custom CSS for positioning the logo, footer, and setting the content width."""
     st.markdown(
         """
         <style>
-        /* Position the logo at the bottom right */
-        .logo-container {
+        /* Sidebar width is set here */
+        .sidebar {
+            width: 300px;
             position: fixed;
-            right: 10px;
-            bottom: 10px;
+            top: 0;
+            left: 0;
+            bottom: 0;
             z-index: 100;
-        }
-        .logo-container img {
-            width: 150px;  /* Adjust size as needed */
-            opacity: 0.8;  /* Optional: adjust opacity */
+            background-color: #f8f9fa;
+            padding: 20px;
         }
 
-       .stApp {
-            margin: 0;
-            padding: 0;
+        /* Main content width calculated based on sidebar width */
+        .main-content {
+            margin-left: 320px; /* Sidebar width + padding */
+            padding: 20px;
         }
-        
-        .content-footer {
-            width: 100%;
-            color: #000;
-            text-align: center;
+
+        /* Fix the header at the top */
+        .header-container {
+            position: fixed;
+            top: 0;
+            left: 320px; /* Sidebar width */
+            width: calc(100% - 320px); /* Full width minus sidebar width */
+            z-index: 100;
+            background-color: #ffffff;
             padding: 10px 0;
-            margin-top: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
-            
+
+        /* Fix the footer at the bottom */
+        .content-footer {
+            position: fixed;
+            bottom: 0;
+            left: 320px; /* Sidebar width */
+            width: calc(100% - 320px); /* Full width minus sidebar width */
+            z-index: 100;
+            background-color: #ffffff;
+            padding: 10px 0;
+            text-align: center;
+            font-size: 14px;
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+            line-height: 1.4;
+        }
+
+        /* Ensure the model diagram height takes the remaining screen space */
+        .model-diagram {
+            position: relative;
+            top: 50px; /* Adjust this value if your header height changes */
+            height: calc(100vh - 120px); /* 120px for header and footer combined */
+            margin: 20px 0;
+            overflow-y: auto; /* Enable scrolling if content exceeds the height */
+        }
+
         /* Enhance button styling */
         .stButton>button {
             width: 100%;
@@ -46,9 +75,21 @@ def add_custom_css():
             color: white;
         }
 
-        /* Add a subtle box shadow to elements for depth */
-        .stTextInput>div>div>input, .stSelectbox>div>div>select {
-            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+        /* Style for mobile and desktop views */
+        @media (max-width: 768px) {
+            .content-footer {
+                font-size: 12px;
+                white-space: normal;
+                word-wrap: break-word;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .content-footer {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
         }
         </style>
         """,
@@ -69,7 +110,7 @@ def add_documentation_section():
 
         ## **Graph Interaction Controls**
         1. **Network Plot**:
-            - **Click on Nodes**: Displays the node’s description in the sidebar.
+            - **Click on Nodes**: Displays the node’s description and node types in the sidebar.
             - **Hover Effects**: Hovering on a node shows a tooltip with the node’s name and description.
             - **Node Colors**:
                 - **Red**: Focus node.
@@ -77,7 +118,7 @@ def add_documentation_section():
                 - **Blue**: Subclass nodes.
 
         2. **Tree Plot**:
-            - **Click on Nodes**: Highlights the node and displays its description.
+            - **Click on Nodes**: Highlights the node, displays its description and node types.
             - **Drag and Drop**: Drag nodes to adjust their positions for better exploration.
             - **Zoom and Pan**: Supports zooming in/out and panning across the graph.
             - **Branch Colors**:
@@ -87,6 +128,8 @@ def add_documentation_section():
         ## **How to Use the Tool**
         1. **Launch the Application**:
             - Run the app using the `streamlit run src/main.py` command.
+            - The app opens in your default web browser.
+            - Stop the app by pressing `Ctrl+C` in the terminal.
         2. **Input Search Criteria**:
             - **Unique Name**: Focus on a specific node by entering its name.
             - **Superclass/Subclass Levels**: Adjust the number of superclass/subclass nodes to display.
@@ -94,6 +137,13 @@ def add_documentation_section():
             - Click on nodes for descriptions.
             - Use the side panel to dynamically change the displayed number of superclass and subclass nodes.
             - Drag, zoom, and pan to explore the hierarchical relationships.
+        4. **Search History**:
+            - The search history is displayed in the sidebar.
+            - Click on a history item to restore the previous search state.
+        5. **Enable Comparative Analysis**:
+            - Use the `Enable Comparative` button to enable the comparative analysis mode.
+            - Select two nodes to compare their hierarchical relationships.
+            - The nodes are highlighted in the graph for easy comparison.
         
         Enjoy exploring the hierarchical data with the interactive visualization tool!
         """)
