@@ -21,39 +21,9 @@ def add_custom_css():
             opacity: 0.8;  /* Optional: adjust opacity */
         }
 
-       /* Fix the sidebar in place without locking its width */
-        .css-1d391kg {  /* This targets the sidebar container */
-            position: fixed !important;  /* Fix the sidebar in place */
-            top: 0;
-            left: 0;
-            height: 100vh;  /* Sidebar takes the full height */
-            z-index: 999;  /* Ensure it's above the content but below the footer */
-            overflow-y: auto;  /* Allow scrolling if content overflows */
-            width: 25%;  /* Set the sidebar width to 25% of the screen */
-        }
-
-        /* Ensure the main content doesn't overlap the sidebar */
-        .css-18e3th9 {
-            margin-left: 25% !important;  /* Reserve space for the sidebar */
-            width: 75% !important;  /* Main content takes the remaining space */
-        }
-
-        /* Fix the footer at the bottom of the viewport */
-        .content-footer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            color: #000;
-            text-align: center;
-            padding: 10px 0;
-            background-color: #f0f0f0;
-            z-index: 1000;  /* Ensure it's above the sidebar */
-        }
-
-        /* Prevent content overlap with the footer */
-        .stApp {
-            padding-bottom: 60px;  /* Leave space for the footer */
+       .stApp {
+            margin: 0;
+            padding: 0;
         }
 
         /* Enhance button styling */
@@ -71,6 +41,42 @@ def add_custom_css():
         /* Add a subtle box shadow to elements for depth */
         .stTextInput>div>div>input, .stSelectbox>div>div>select {
             box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+        }
+
+        /* Ensure the main content area takes up all available space */
+        .main .block-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding-bottom: 0;
+        }
+
+        /* Style for the footer */
+        .content-footer {
+            flex-shrink: 0;
+            color: #000;
+            text-align: center;
+            padding: 10px 0;
+            font-size: 14px;
+            width: 100%;
+            margin-top: 20px;
+            line-height: 1.4;
+        }
+
+        @media (max-width: 768px) {
+            .content-footer {
+                font-size: 12px;
+                white-space: normal;
+                word-wrap: break-word;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .content-footer {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
         }
         </style>
         """,
