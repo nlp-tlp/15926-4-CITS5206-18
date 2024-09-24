@@ -5,25 +5,62 @@ def set_page_layout():
     st.set_page_config(layout="wide")
 
 def add_custom_css():
-    """Add custom CSS for positioning the logo and footer."""
+    """Add custom CSS for positioning the logo, footer, and setting the content width."""
     st.markdown(
         """
         <style>
-        /* Position the logo at the bottom right */
-        .logo-container {
+        /* Sidebar width is set here */
+        .sidebar {
+            width: 300px;
             position: fixed;
-            right: 10px;
-            bottom: 10px;
+            top: 0;
+            left: 0;
+            bottom: 0;
             z-index: 100;
-        }
-        .logo-container img {
-            width: 150px;  /* Adjust size as needed */
-            opacity: 0.8;  /* Optional: adjust opacity */
+            background-color: #f8f9fa;
+            padding: 20px;
         }
 
-       .stApp {
-            margin: 0;
-            padding: 0;
+        /* Main content width calculated based on sidebar width */
+        .main-content {
+            margin-left: 320px; /* Sidebar width + padding */
+            padding: 20px;
+        }
+
+        /* Fix the header at the top */
+        .header-container {
+            position: fixed;
+            top: 0;
+            left: 320px; /* Sidebar width */
+            width: calc(100% - 320px); /* Full width minus sidebar width */
+            z-index: 100;
+            background-color: #ffffff;
+            padding: 10px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        /* Fix the footer at the bottom */
+        .content-footer {
+            position: fixed;
+            bottom: 0;
+            left: 320px; /* Sidebar width */
+            width: calc(100% - 320px); /* Full width minus sidebar width */
+            z-index: 100;
+            background-color: #ffffff;
+            padding: 10px 0;
+            text-align: center;
+            font-size: 14px;
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+            line-height: 1.4;
+        }
+
+        /* Ensure the model diagram height takes the remaining screen space */
+        .model-diagram {
+            position: relative;
+            top: 50px; /* Adjust this value if your header height changes */
+            height: calc(100vh - 120px); /* 120px for header and footer combined */
+            margin: 20px 0;
+            overflow-y: auto; /* Enable scrolling if content exceeds the height */
         }
 
         /* Enhance button styling */
@@ -38,31 +75,7 @@ def add_custom_css():
             color: white;
         }
 
-        /* Add a subtle box shadow to elements for depth */
-        .stTextInput>div>div>input, .stSelectbox>div>div>select {
-            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-        }
-
-        /* Ensure the main content area takes up all available space */
-        .main .block-container {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            padding-bottom: 0;
-        }
-
-        /* Style for the footer */
-        .content-footer {
-            flex-shrink: 0;
-            color: #000;
-            text-align: center;
-            padding: 10px 0;
-            font-size: 14px;
-            width: 100%;
-            margin-top: 20px;
-            line-height: 1.4;
-        }
-
+        /* Style for mobile and desktop views */
         @media (max-width: 768px) {
             .content-footer {
                 font-size: 12px;
