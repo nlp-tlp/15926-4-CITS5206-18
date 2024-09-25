@@ -99,7 +99,7 @@ def display_d3js_plot(data, search_term, parent_limit, children_limit):
     # Display the D3.js graph with node descriptions on click, arrows on links, curved lines, a popup animation on hover, and panning/zooming
     components.html(
         """
-        <div id="d3-container" style="height: 600px;border: 2px solid #ccc; padding: 10px 10px 10px 10px; box-shadow: 0 0 10px rgba(0,0,0,0.05); overflow: hidden;"></div>
+        <div id="d3-container" style="height: 586px;border: 2px solid #ccc; padding: 10px 10px 10px 10px; box-shadow: 0 0 10px rgba(0,0,0,0.05); overflow: hidden;"></div>
         <div id="tooltip" style="position: absolute; display: none; background: #fff; border: 1px solid #ccc; padding: 10px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1);"></div>
         <script src="https://d3js.org/d3.v7.min.js"></script>
         <script>
