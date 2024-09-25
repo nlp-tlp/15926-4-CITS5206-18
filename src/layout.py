@@ -44,14 +44,15 @@ def add_custom_css():
             position: fixed;
             bottom: 0;
             left: 320px; /* Sidebar width */
-            width: calc(100% - 320px); /* Full width minus sidebar width */
+            width: calc(100% - 320px); /* Full width minus sidebar */
             z-index: 100;
             background-color: #ffffff;
-            padding: 10px 0;
+            padding: 1vh 0; /* Responsive padding using viewport height */
             text-align: center;
             font-size: 14px;
-            box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
-            line-height: 1.4;
+            /* Remove the border or shadow from the footer */
+            box-shadow: none;
+            height: auto; /* Allow the footer to adapt its height */
         }
 
         /* Ensure the model diagram height takes the remaining screen space */
