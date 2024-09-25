@@ -1,5 +1,5 @@
 import streamlit as st
-from layout import set_page_layout, add_custom_css, add_documentation_section, end_main_content_wrapper
+from layout import set_page_layout, add_custom_css, end_main_content_wrapper
 from data_handler import load_data, extract_unique_names
 from networkx_plot import display_networkx_plot
 from d3js_plot import display_d3js_plot
@@ -38,9 +38,6 @@ set_page_layout()
 
 # Add custom CSS for positioning the logo and footer
 add_custom_css()
-
-# Add the documentation section
-add_documentation_section()
 
 # Initialize session state for page selection
 if 'page' not in st.session_state:

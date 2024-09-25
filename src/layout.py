@@ -21,22 +21,27 @@ def add_custom_css():
             padding: 20px;
         }
 
-        /* Main content width calculated based on sidebar width */
+        /* Main content width and height calculated based on sidebar width and dynamic height */
         .main-content {
             margin-left: 320px; /* Sidebar width + padding */
             padding: 20px;
+            height: calc(100vh - 120px); /* View height minus header (50px) and footer (70px) */
+            overflow: hidden; /* Disable scrolling */
+            box-sizing: border-box; /* Ensure padding is included in height calculation */
         }
 
         /* Fix the header at the top */
         .header-container {
             position: fixed;
-            top: 0;
+            top: 0; /* Make sure it sticks to the top */
             left: 320px; /* Sidebar width */
             width: calc(100% - 320px); /* Full width minus sidebar width */
             z-index: 100;
             background-color: #ffffff;
-            padding: 10px 0;
+            padding: 5px 0; /* Adjust padding to reduce spacing */
+            font-size: 6px; /* Make the font smaller */
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin: 0; /* Remove any margin to ensure it's at the top */
         }
 
         /* Fix the footer at the bottom */
@@ -96,58 +101,6 @@ def add_custom_css():
         """,
         unsafe_allow_html=True
     )
-
-def add_documentation_section():
-    """Add the documentation section to the app."""
-    with st.expander("📚**DOCUMENTATION**📚"):
-        st.markdown("""
-        ## **Overview**
-        The Interactive Visualization Tool for the ISO 15926-4 Standard helps users explore hierarchical data relationships with D3.js and NetworkX visualizations. The tool is built with Streamlit, offering a user-friendly web interface. It visualizes nodes as unique elements and edges as superclass-subclass relationships. The interactive functionality allows users to explore data structures dynamically.
-
-        ## **Search Options**
-        - **Search by Unique Name**: Use the search bar to focus on a specific node.
-        - **Number of Superclass Levels**: Adjust how many levels of superclass nodes to display.
-        - **Number of Subclass Levels**: Adjust how many levels of subclass nodes to display.
-
-        ## **Graph Interaction Controls**
-        1. **Network Plot**:
-            - **Click on Nodes**: Displays the node’s description and node types in the sidebar.
-            - **Hover Effects**: Hovering on a node shows a tooltip with the node’s name and description.
-            - **Node Colors**:
-                - **Red**: Focus node.
-                - **Green**: Superclass nodes.
-                - **Blue**: Subclass nodes.
-
-        2. **Tree Plot**:
-            - **Click on Nodes**: Highlights the node, displays its description and node types.
-            - **Drag and Drop**: Drag nodes to adjust their positions for better exploration.
-            - **Zoom and Pan**: Supports zooming in/out and panning across the graph.
-            - **Branch Colors**:
-                - **Yellow**: Connects superclass nodes.
-                - **Blue**: Connects subclass nodes.
-
-        ## **How to Use the Tool**
-        1. **Launch the Application**:
-            - Run the app using the `streamlit run src/main.py` command.
-            - The app opens in your default web browser.
-            - Stop the app by pressing `Ctrl+C` in the terminal.
-        2. **Input Search Criteria**:
-            - **Unique Name**: Focus on a specific node by entering its name.
-            - **Superclass/Subclass Levels**: Adjust the number of superclass/subclass nodes to display.
-        3. **Explore the Graph**:
-            - Click on nodes for descriptions.
-            - Use the side panel to dynamically change the displayed number of superclass and subclass nodes.
-            - Drag, zoom, and pan to explore the hierarchical relationships.
-        4. **Search History**:
-            - The search history is displayed in the sidebar.
-            - Click on a history item to restore the previous search state.
-        5. **Enable Comparative Analysis**:
-            - Use the `Enable Comparative` button to enable the comparative analysis mode.
-            - Select two nodes to compare their hierarchical relationships.
-            - The nodes are highlighted in the graph for easy comparison.
-        
-        Enjoy exploring the hierarchical data with the interactive visualization tool!
-        """)
 
 def end_main_content_wrapper():
     """Close the main content wrapper and add the footer within the content area."""
