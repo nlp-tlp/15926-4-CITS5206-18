@@ -41,7 +41,7 @@ def display_networkx_plot(data, search_term, parent_limit, children_limit):
                 G.add_edge(unique_name, subclass)  # Correct direction: subclass to node
 
     # Initialize PyVis network graph with white background and black text
-    net = Network(height="78vh", width="100%", bgcolor="#ffffff", font_color="black", directed=True)
+    net = Network(height="82vh", width="100%", bgcolor="#ffffff", font_color="black", directed=True)
 
     # Filtering logic for displaying nodes up to specified parent and child levels from the search term
     if search_term and search_term in G:
@@ -136,4 +136,4 @@ def display_networkx_plot(data, search_term, parent_limit, children_limit):
                 }}
             }});
         </script>
-    """, height=780)
+    """, height=820)
