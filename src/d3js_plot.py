@@ -85,11 +85,7 @@ def display_d3js_plot(data, search_term, parent_limit, children_limit):
         return children
 
     # Generate a filtered dataset based on the search term
-    filtered_data_list = [item for item in data if item["uniqueName"] == search_term]
-    if not filtered_data_list:
-        st.error(f"No data found for uniqueName: {search_term}")
-        return
-    filtered_data = filtered_data_list[0]
+    filtered_data = [item for item in data if item["uniqueName"] == search_term][0]
 
     # Prepare the hierarchical data for D3.js
     hierarchical_data = {
