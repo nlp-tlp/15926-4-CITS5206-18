@@ -100,6 +100,36 @@ def display_d3js_plot(data, search_term, parent_limit, children_limit):
     components.html(
         """
         <div id="d3-container" style="height: 586px;border: 2px solid #ccc; padding: 10px 10px 10px 10px; box-shadow: 0 0 10px rgba(0,0,0,0.05); overflow: hidden;"></div>
+        <div style="display: flex; justify-content: center; align-items: center; margin-top: 20px;">
+                <button id="fullscreen-btn" onclick="toggleFullscreen()" style="
+                    padding: 10px 20px; 
+                    font-size: 16px; 
+                    background: linear-gradient(90deg, #87CEEB 0%, #FFD700 100%);  /* Gradient from light blue to yellow */
+                    color: white;  /* Text color */
+                    border: 3px solid #002855;  /* Navy blue border */
+                    border-radius: 5px; 
+                    cursor: pointer; 
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                    Go Fullscreen
+                </button>
+            </div>
+
+            <script>
+                function toggleFullscreen() {
+                    const elem = document.getElementById('d3-container');
+                    if (!document.fullscreenElement) {
+                        elem.style.backgroundColor = "white";  // Set background color to white in fullscreen
+                        elem.requestFullscreen().catch(err => {
+                            alert(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+                        });
+                    } else {
+                        document.exitFullscreen();
+                    }
+                }
+            </script>
+
+
+
         <div id="tooltip" style="position: absolute; display: none; background: #fff; border: 1px solid #ccc; padding: 10px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1);"></div>
         <script src="https://d3js.org/d3.v7.min.js"></script>
         <script>
