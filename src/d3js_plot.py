@@ -99,12 +99,16 @@ def display_d3js_plot(data, search_term, parent_limit, children_limit):
     # Display the D3.js graph with node descriptions on click, arrows on links, curved lines, a popup animation on hover, and panning/zooming
     components.html(
         """
-        <div id="d3-container" style="height: 586px;border: 2px solid #ccc; padding: 10px 10px 10px 10px; box-shadow: 0 0 10px rgba(0,0,0,0.05); overflow: hidden;"></div>
+        <div id="d3-container" style="height: 600px; padding: 10px; 
+    border: 10px solid transparent;  /* Create space for the border */
+    border-image: linear-gradient(90deg, #FFD700, #002855) 1;  /* Gradient matching NLP TLP logo */
+    box-shadow: 0 0 10px rgba(0,0,0,0.05); overflow: hidden;">
+        </div>
         <div style="display: flex; justify-content: center; align-items: center; margin-top: 20px;">
                 <button id="fullscreen-btn" onclick="toggleFullscreen()" style="
                     padding: 10px 20px; 
                     font-size: 16px; 
-                    background: linear-gradient(90deg, #87CEEB 0%, #FFD700 100%);  /* Gradient from light blue to yellow */
+                    background: linear-gradient(90deg, #FFD700, #002855);  /* Gradient from light blue to yellow */
                     color: white;  /* Text color */
                     border: 3px solid #002855;  /* Navy blue border */
                     border-radius: 5px; 
