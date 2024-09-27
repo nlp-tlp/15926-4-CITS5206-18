@@ -100,7 +100,7 @@ def display_d3js_plot(data, search_term, parent_limit, children_limit):
     components.html(
         """
         <div id="d3-container" style="height: 600px; padding: 10px; 
-    border: 10px solid transparent;  /* Create space for the border */
+    border: 5px solid transparent;  /* Create space for the border */
     border-image: linear-gradient(90deg, #FFD700, #002855) 1;  /* Gradient matching NLP TLP logo */
     box-shadow: 0 0 10px rgba(0,0,0,0.05); overflow: hidden;">
         </div>
