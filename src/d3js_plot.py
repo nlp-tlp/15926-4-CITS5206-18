@@ -123,7 +123,58 @@ def display_d3js_plot(data, search_term, parent_limit, children_limit):
     # Display the D3.js graph with node descriptions on click, arrows on links, curved lines, a popup animation on hover, and panning/zooming
     components.html(
         """
-        <div id="d3-container" style="height: 586px;border: 2px solid #ccc; padding: 10px 10px 10px 10px; box-shadow: 0 0 10px rgba(0,0,0,0.05); overflow: hidden;"></div>
+        <div id="d3-container" style="height: 600px; padding: 0; margin: 0; 
+    border: 5px solid transparent;  /* Create space for the border */
+    border-image: linear-gradient(90deg, #FFD700, #002855) 1;  /* Gradient matching NLP TLP logo */
+    box-sizing: border-box; /* Ensure padding and border are included in width and height calculations */
+    box-shadow: 0 0 10px rgba(0,0,0,0.05); overflow: hidden;">
+        </div>
+        <div style="display: flex; justify-content: center; align-items: center; margin-top: 20px;">
+                <button id="fullscreen-btn" onclick="toggleFullscreen()" style="
+                    padding: 10px 20px; 
+                    font-size: 16px; 
+                    background: linear-gradient(90deg, #FFD700, #002855);  /* Gradient from light blue to yellow */
+                    color: white;  /* Text color */
+                    border: 3px solid #002855;  /* Navy blue border */
+                    border-radius: 5px; 
+                    cursor: pointer; 
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                    Go Fullscreen
+                </button>
+            </div>
+
+            <script>
+                function toggleFullscreen() {
+                    const elem = document.getElementById('d3-container');
+                    if (!document.fullscreenElement) {
+                        elem.style.backgroundColor = "white";  // Set background color to white in fullscreen
+                        elem.style.width = "100vw";  // Fullscreen width
+                        elem.style.height = "100vh";  // Fullscreen height
+                        elem.requestFullscreen().catch(err => {
+                            alert(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+                        });
+                    } else {
+                        elem.style.width = "";  // Reset to default width
+                        elem.style.height = "";  // Reset to default height
+                        document.exitFullscreen();
+                    }
+                }
+
+                // Automatically reset when exiting fullscreen
+                document.addEventListener('fullscreenchange', function () {
+                    const elem = document.getElementById('d3-container');
+                    const buttonContainer = document.getElementById('button-container');
+
+                    if (!document.fullscreenElement) {
+                        elem.style.width = "100%";  // Reset to default width
+                        elem.style.height = "600px";  // Reset to default height
+                        buttonContainer.style.display = "flex";  // Show the button after exiting fullscreen
+                    }
+                });
+            </script>
+
+
+
         <div id="tooltip" style="position: absolute; display: none; background: #fff; border: 1px solid #ccc; padding: 10px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1);"></div>
         <script src="https://d3js.org/d3.v7.min.js"></script>
         <script>
@@ -140,8 +191,8 @@ def display_d3js_plot(data, search_term, parent_limit, children_limit):
             treeLayout(root);
 
             const svg = d3.select("#d3-container").append("svg")
-                .attr("width", width + 300)  // Add extra space to the right for labels
-                .attr("height", height + 200)
+                .attr("width", "100%")  // Set svg width to 100% of the container
+                .attr("height", "100%")  // Set svg height to 100% of the container
                 .call(d3.zoom().on("zoom", function(event) {
                     svg.attr("transform", event.transform);
                 }))
