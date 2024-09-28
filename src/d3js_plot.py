@@ -28,22 +28,39 @@ def display_d3js_plot(data, search_term, parent_limit, children_limit):
     # Create mappings for quick access
     uniqueName_to_node = { item['uniqueName']: item for item in data }
     
+    # -------------------------------------------
+    # Recursive Function to Find Parent Nodes
+    # -------------------------------------------
     def find_parents(node_name, level, data, current_level=1, visited=None):
+        # Initialize the visited set if it's the first call
         if visited is None:
             visited = set()
+
+        # Base case: stop recursion if no more levels to traverse or node already
         if level == 0 or node_name in visited:
             return []
+        
+        # Mark the current node as visited to prevent revisiting
         visited.add(node_name)
         parents = []
+        # Retrieve the current node's data using the mapping
         node = uniqueName_to_node.get(node_name)
         if not node:
+            # If the node is not found in the mapping, return an empty list
             return []
+        
+        # Get the list of superclasses (parent nodes) for the current node
         superclasses = node.get('superclasses', '')
+        # Split the superclasses string into a list, stripping any extra whitespace
         superclasses_list = [s.strip() for s in superclasses.split(',') if s.strip()]
+        # Iterate over each superclass to build the parent hierarchy
         for parent_name in superclasses_list:
             if parent_name in uniqueName_to_node:
+                # Determine the color for the parent node
                 color = get_specific_node_color(parent_name) or get_color_by_level(current_level)
+                # Retrieve the parent node's data
                 parent_node = uniqueName_to_node[parent_name]
+                 # Recursively find the parent's parents
                 parents.append({
                     "name": parent_name,
                     "children": find_parents(parent_name, level - 1, data, current_level + 1, visited),
@@ -53,24 +70,34 @@ def display_d3js_plot(data, search_term, parent_limit, children_limit):
                 })
         return parents
 
-    # Function to find child nodes up to a certain level
+    # -------------------------------------------
+    # Recursive Function to Find Childe Nodes
+    # -------------------------------------------
     def find_children(node_name, level, data, current_level=1, visited=None):
+        # Initialize the visited set if it's the first call
         if visited is None:
             visited = set()
+
+        # Base case: stop recursion if no more levels to traverse or node already
         if level == 0 or node_name in visited:
             return []
+        # Mark the current node as visited to prevent revisiting
         visited.add(node_name)
         children = []
         node = uniqueName_to_node.get(node_name)
         if not node:
+            # If the node is not found in the mapping, return an empty list
             return []
-        # Use the 'subclasses' field directly
+        
+        # Retrieve the 'subclasses' field and split it into a list
         subclasses = node.get('subclasses', '')
         subclasses_list = [s.strip() for s in subclasses.split(',') if s.strip()]
         for child_name in subclasses_list:
             if child_name in uniqueName_to_node:
+                # Determine the color for the child node
                 color = get_specific_node_color(child_name) or get_color_by_level(current_level)
                 child_node = uniqueName_to_node[child_name]
+                # Recursively find the children of the current child node
                 children.append({
                     "name": child_name,
                     "children": find_children(child_name, level - 1, data, current_level + 1, visited),
