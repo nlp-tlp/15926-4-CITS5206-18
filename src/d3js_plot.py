@@ -99,9 +99,10 @@ def display_d3js_plot(data, search_term, parent_limit, children_limit):
     # Display the D3.js graph with node descriptions on click, arrows on links, curved lines, a popup animation on hover, and panning/zooming
     components.html(
         """
-        <div id="d3-container" style="height: 600px; padding: 10px; 
+        <div id="d3-container" style="height: 600px; padding: 0; margin: 0; 
     border: 5px solid transparent;  /* Create space for the border */
     border-image: linear-gradient(90deg, #FFD700, #002855) 1;  /* Gradient matching NLP TLP logo */
+    box-sizing: border-box; /* Ensure padding and border are included in width and height calculations */
     box-shadow: 0 0 10px rgba(0,0,0,0.05); overflow: hidden;">
         </div>
         <div style="display: flex; justify-content: center; align-items: center; margin-top: 20px;">
@@ -123,13 +124,29 @@ def display_d3js_plot(data, search_term, parent_limit, children_limit):
                     const elem = document.getElementById('d3-container');
                     if (!document.fullscreenElement) {
                         elem.style.backgroundColor = "white";  // Set background color to white in fullscreen
+                        elem.style.width = "100vw";  // Fullscreen width
+                        elem.style.height = "100vh";  // Fullscreen height
                         elem.requestFullscreen().catch(err => {
                             alert(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
                         });
                     } else {
+                        elem.style.width = "";  // Reset to default width
+                        elem.style.height = "";  // Reset to default height
                         document.exitFullscreen();
                     }
                 }
+
+                // Automatically reset when exiting fullscreen
+                document.addEventListener('fullscreenchange', function () {
+                    const elem = document.getElementById('d3-container');
+                    const buttonContainer = document.getElementById('button-container');
+
+                    if (!document.fullscreenElement) {
+                        elem.style.width = "100%";  // Reset to default width
+                        elem.style.height = "600px";  // Reset to default height
+                        buttonContainer.style.display = "flex";  // Show the button after exiting fullscreen
+                    }
+                });
             </script>
 
 
@@ -150,8 +167,8 @@ def display_d3js_plot(data, search_term, parent_limit, children_limit):
             treeLayout(root);
 
             const svg = d3.select("#d3-container").append("svg")
-                .attr("width", width + 300)  // Add extra space to the right for labels
-                .attr("height", height + 200)
+                .attr("width", "100%")  // Set svg width to 100% of the container
+                .attr("height", "100%")  // Set svg height to 100% of the container
                 .call(d3.zoom().on("zoom", function(event) {
                     svg.attr("transform", event.transform);
                 }))
