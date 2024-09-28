@@ -28,16 +28,7 @@ def display_d3js_plot(data, search_term, parent_limit, children_limit):
     # Create mappings for quick access
     uniqueName_to_node = { item['uniqueName']: item for item in data }
     
-    # Build subclass mapping for reverse lookup
-    subclass_mapping = {}
-    for item in data:
-        superclasses = item.get('superclasses', '')
-        superclasses_list = [s.strip() for s in superclasses.split(',') if s.strip()]
-        for superclass in superclasses_list:
-            subclass_mapping.setdefault(superclass, []).append(item['uniqueName'])
-
-    # Function to find child nodes up to a certain level
-    def find_parents(node_name, level, current_level=1, visited=None):
+    def find_parents(node_name, level, data, current_level=1, visited=None):
         if visited is None:
             visited = set()
         if level == 0 or node_name in visited:
@@ -55,29 +46,34 @@ def display_d3js_plot(data, search_term, parent_limit, children_limit):
                 parent_node = uniqueName_to_node[parent_name]
                 parents.append({
                     "name": parent_name,
-                    "children": find_parents(parent_name, level - 1, current_level + 1, visited),
+                    "children": find_parents(parent_name, level - 1, data, current_level + 1, visited),
                     "color": color,
                     "description": parent_node.get("description", "No description available."),
                     "types": parent_node.get("types", "Unknown")
                 })
         return parents
-    
+
     # Function to find child nodes up to a certain level
-    def find_children(node_name, level, current_level=1, visited=None):
+    def find_children(node_name, level, data, current_level=1, visited=None):
         if visited is None:
             visited = set()
         if level == 0 or node_name in visited:
             return []
         visited.add(node_name)
         children = []
-        subclasses = subclass_mapping.get(node_name, [])
-        for child_name in subclasses:
+        node = uniqueName_to_node.get(node_name)
+        if not node:
+            return []
+        # Use the 'subclasses' field directly
+        subclasses = node.get('subclasses', '')
+        subclasses_list = [s.strip() for s in subclasses.split(',') if s.strip()]
+        for child_name in subclasses_list:
             if child_name in uniqueName_to_node:
                 color = get_specific_node_color(child_name) or get_color_by_level(current_level)
                 child_node = uniqueName_to_node[child_name]
                 children.append({
                     "name": child_name,
-                    "children": find_children(child_name, level - 1, current_level + 1, visited),
+                    "children": find_children(child_name, level - 1, data, current_level + 1, visited),
                     "color": color,
                     "description": child_node.get("description", "No description available."),
                     "types": child_node.get("types", "Unknown")
@@ -93,12 +89,12 @@ def display_d3js_plot(data, search_term, parent_limit, children_limit):
         "children": [
             {
                 "name": "Superclasses",
-                "children": find_parents(filtered_data["uniqueName"], parent_limit),
+                "children": find_parents(filtered_data["uniqueName"], parent_limit,data),
                 "color": get_specific_node_color("Superclasses")  # Set specific color for "Superclasses"
             },
             {
                 "name": "Subclasses",
-                "children": find_children(filtered_data["uniqueName"], children_limit),
+                "children": find_children(filtered_data["uniqueName"], children_limit,data),
                 "color": get_specific_node_color("Subclasses")  # Set specific color for "Subclasses"
             }
         ],
