@@ -10,7 +10,7 @@ def display_networkx_plot(data, search_term, parent_limit, children_limit):
     """Display the NetworkX plot with user-defined parameters."""
     
     # Header for the NetworkX Plot section
-    st.header("Network Plot")
+    st.markdown("<h2 style='padding-bottom: 24px;'>Network Plot</h2>", unsafe_allow_html=True)
 
      # Create a mapping from uniqueName to node data for quick access
     uniqueName_to_node = { item['uniqueName']: item for item in data }
@@ -199,4 +199,4 @@ def display_networkx_plot(data, search_term, parent_limit, children_limit):
                 }}
             }});
         </script>
-    """, height=490)
+    """, height=480)
