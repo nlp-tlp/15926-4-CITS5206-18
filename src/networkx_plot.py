@@ -128,7 +128,7 @@ def display_networkx_plot(data, search_term, parent_limit, children_limit):
 
     # JavaScript for handling node clicks in NetworkX Plot
     components.html(f"""
-        <div id="networkx-container" style="height: 600px; padding: 0; margin: 0; 
+        <div id="networkx-container" style="height: 400px; padding: 0; margin: 0; 
     border: 5px solid transparent;  /* Create space for the border */
     border-image: linear-gradient(90deg, #FFD700, #002855) 1;  /* Gradient matching NLP TLP logo */
     box-sizing: border-box; /* Ensure padding and border are included in width and height calculations */
@@ -199,4 +199,4 @@ def display_networkx_plot(data, search_term, parent_limit, children_limit):
                 }}
             }});
         </script>
-    """, height=820)
+    """, height=490)
