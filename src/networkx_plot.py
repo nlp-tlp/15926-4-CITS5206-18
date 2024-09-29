@@ -12,6 +12,9 @@ def display_networkx_plot(data, search_term, parent_limit, children_limit):
     # Header for the NetworkX Plot section
     st.header("Network Plot")
 
+     # Create a mapping from uniqueName to node data for quick access
+    uniqueName_to_node = { item['uniqueName']: item for item in data }
+
     # Create a directed graph
     G = nx.DiGraph()
 
@@ -39,33 +42,55 @@ def display_networkx_plot(data, search_term, parent_limit, children_limit):
             if subclass:
                 G.add_node(subclass)
                 G.add_edge(unique_name, subclass)  # Correct direction: subclass to node
+    
+    # Define functions to find parent and child nodes up to specified levels using mappings and visited sets
+    def find_parents(node_name, level, visited=None):
+        if visited is None:
+            visited = set()
+        if level == 0 or node_name in visited:
+            return set()
+        visited.add(node_name)
+        parents = set()
+        node = uniqueName_to_node.get(node_name)
+        if not node:
+            return parents
+        superclasses = node.get('superclasses', '')
+        superclasses_list = [s.strip() for s in superclasses.split(',') if s.strip()]
+        for parent_name in superclasses_list:
+            if parent_name in uniqueName_to_node:
+                parents.add(parent_name)
+                parents.update(find_parents(parent_name, level - 1, visited))
+        return parents
+    
+    def find_children(node_name, level, visited=None):
+        if visited is None:
+            visited = set()
+        if level == 0 or node_name in visited:
+            return set()
+        visited.add(node_name)
+        children = set()
+        node = uniqueName_to_node.get(node_name)
+        if not node:
+            return children
+        subclasses = node.get('subclasses', '')
+        subclasses_list = [s.strip() for s in subclasses.split(',') if s.strip()]
+        for child_name in subclasses_list:
+            if child_name in uniqueName_to_node:
+                children.add(child_name)
+                children.update(find_children(child_name, level - 1, visited))
+        return children
 
     # Initialize PyVis network graph with white background and black text
     net = Network(height="82vh", width="100%", bgcolor="#ffffff", font_color="black", directed=True)
 
     # Filtering logic for displaying nodes up to specified parent and child levels from the search term
     if search_term and search_term in G:
-        # BFS for Parent Nodes up to the specified parent levels
-        parent_nodes = {search_term}
-        current_level_nodes = {search_term}
-
-        for _ in range(parent_limit):
-            next_level_nodes = set()
-            for node in current_level_nodes:
-                next_level_nodes.update(G.predecessors(node))  # Parents (ancestors)
-            current_level_nodes = next_level_nodes - parent_nodes
-            parent_nodes.update(current_level_nodes)
-
-        # BFS for Child Nodes up to the specified children levels
-        child_nodes = {search_term}
-        current_level_nodes = {search_term}
-
-        for _ in range(children_limit):
-            next_level_nodes = set()
-            for node in current_level_nodes:
-                next_level_nodes.update(G.successors(node))  # Children (descendants)
-            current_level_nodes = next_level_nodes - child_nodes
-            child_nodes.update(current_level_nodes)
+        # Find parent and child nodes using the functions with mapping and visited sets
+        parent_nodes = find_parents(search_term, parent_limit)
+        child_nodes = find_children(search_term, children_limit)
+        # Include the search_term in both sets
+        parent_nodes.add(search_term)
+        child_nodes.add(search_term)
 
         # Combine parent, child nodes, and the search term into one subgraph
         sub_graph_nodes = parent_nodes.union(child_nodes)
@@ -74,16 +99,16 @@ def display_networkx_plot(data, search_term, parent_limit, children_limit):
         # Convert subgraph to PyVis graph
         net.from_nx(sub_graph)
 
-        # Apply specific colors based on node type
-        for node in sub_graph.nodes():
+        for node in sub_graph_nodes:
+            node_data = net.get_node(node)
             if node == search_term:
-                net.get_node(node)["color"] = "red"  # Searched node
+                node_data["color"] = "red"  # Searched node
             elif node in parent_nodes:
-                net.get_node(node)["color"] = "green"  # Parent nodes
+                node_data["color"] = "green"  # Parent nodes
             elif node in child_nodes:
-                net.get_node(node)["color"] = "blue"  # Child nodes
+                node_data["color"] = "blue"  # Child nodes
             else:
-                net.get_node(node)["color"] = "white"  # Default color for other nodes
+                node_data["color"] = "white"  # Default color for other nodes
 
     else:
         # If no search term or term not found, visualize entire graph
