@@ -132,8 +132,13 @@ def display_networkx_plot(data, search_term, parent_limit, children_limit):
     border: 5px solid transparent;  /* Create space for the border */
     border-image: linear-gradient(90deg, #FFD700, #002855) 1;  /* Gradient matching NLP TLP logo */
     box-sizing: border-box; /* Ensure padding and border are included in width and height calculations */
-    box-shadow: 0 0 10px rgba(0,0,0,0.05); overflow: hidden;">
-            {graph_html}  <!-- Embed PyVis graph -->
+    box-shadow: 0 0 10px rgba(0,0,0,0.05); overflow: hidden;
+                display: flex;  /* Enable flexbox layout */
+            max-width: 100%;  /* Ensure content does not overflow horizontally */
+            max-height: 100%; /* Ensure content does not overflow vertically */
+            justify-content: center;  /* Horizontally center the graph */
+            align-items: center;  /* Vertically center the graph */">
+                {graph_html}  <!-- Embed PyVis graph -->
         </div>
         
         <div style="display: flex; justify-content: center; align-items: center; margin-top: 20px;">
