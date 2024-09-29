@@ -24,38 +24,86 @@ def display_d3js_plot(data, search_term, parent_limit, children_limit):
             return "#1E90FF"  # Bright blue for "Subclasses"
         else:
             return None  # No specific color, use level-based color
+    
+    # Create mappings for quick access
+    uniqueName_to_node = { item['uniqueName']: item for item in data }
+    
+    # -------------------------------------------
+    # Recursive Function to Find Parent Nodes
+    # -------------------------------------------
+    def find_parents(node_name, level, data, current_level=1, visited=None):
+        # Initialize the visited set if it's the first call
+        if visited is None:
+            visited = set()
 
-    # Function to find parent nodes up to a certain level
-    def find_parents(node_name, level, data, current_level=1):
-        if level == 0:
+        # Base case: stop recursion if no more levels to traverse or node already
+        if level == 0 or node_name in visited:
             return []
+        
+        # Mark the current node as visited to prevent revisiting
+        visited.add(node_name)
         parents = []
-        for item in data:
-            if node_name in item["subclasses"].split(", "):
-                color = get_specific_node_color(item["uniqueName"]) or get_color_by_level(current_level)
+        # Retrieve the current node's data using the mapping
+        node = uniqueName_to_node.get(node_name)
+        if not node:
+            # If the node is not found in the mapping, return an empty list
+            return []
+        
+        # Get the list of superclasses (parent nodes) for the current node
+        superclasses = node.get('superclasses', '')
+        # Split the superclasses string into a list, stripping any extra whitespace
+        superclasses_list = [s.strip() for s in superclasses.split(',') if s.strip()]
+        # Iterate over each superclass to build the parent hierarchy
+        for parent_name in superclasses_list:
+            if parent_name in uniqueName_to_node:
+                # Determine the color for the parent node
+                color = get_specific_node_color(parent_name) or get_color_by_level(current_level)
+                # Retrieve the parent node's data
+                parent_node = uniqueName_to_node[parent_name]
+                 # Recursively find the parent's parents
                 parents.append({
-                    "name": item["uniqueName"],
-                    "children": find_parents(item["uniqueName"], level - 1, data, current_level + 1),
+                    "name": parent_name,
+                    "children": find_parents(parent_name, level - 1, data, current_level + 1, visited),
                     "color": color,
-                    "description": item["description"],
-                    "types": item["types"]
+                    "description": parent_node.get("description", "No description available."),
+                    "types": parent_node.get("types", "Unknown")
                 })
         return parents
 
-    # Function to find child nodes up to a certain level
-    def find_children(node_name, level, data, current_level=1):
-        if level == 0:
+    # -------------------------------------------
+    # Recursive Function to Find Childe Nodes
+    # -------------------------------------------
+    def find_children(node_name, level, data, current_level=1, visited=None):
+        # Initialize the visited set if it's the first call
+        if visited is None:
+            visited = set()
+
+        # Base case: stop recursion if no more levels to traverse or node already
+        if level == 0 or node_name in visited:
             return []
+        # Mark the current node as visited to prevent revisiting
+        visited.add(node_name)
         children = []
-        for item in data:
-            if node_name in item["superclasses"].split(", "):
-                color = get_specific_node_color(item["uniqueName"]) or get_color_by_level(current_level)
+        node = uniqueName_to_node.get(node_name)
+        if not node:
+            # If the node is not found in the mapping, return an empty list
+            return []
+        
+        # Retrieve the 'subclasses' field and split it into a list
+        subclasses = node.get('subclasses', '')
+        subclasses_list = [s.strip() for s in subclasses.split(',') if s.strip()]
+        for child_name in subclasses_list:
+            if child_name in uniqueName_to_node:
+                # Determine the color for the child node
+                color = get_specific_node_color(child_name) or get_color_by_level(current_level)
+                child_node = uniqueName_to_node[child_name]
+                # Recursively find the children of the current child node
                 children.append({
-                    "name": item["uniqueName"],
-                    "children": find_children(item["uniqueName"], level - 1, data, current_level + 1),
+                    "name": child_name,
+                    "children": find_children(child_name, level - 1, data, current_level + 1, visited),
                     "color": color,
-                    "description": item["description"],
-                    "types": item["types"]
+                    "description": child_node.get("description", "No description available."),
+                    "types": child_node.get("types", "Unknown")
                 })
         return children
 
@@ -68,19 +116,18 @@ def display_d3js_plot(data, search_term, parent_limit, children_limit):
         "children": [
             {
                 "name": "Superclasses",
-                "children": find_parents(filtered_data["uniqueName"], parent_limit, data),
+                "children": find_parents(filtered_data["uniqueName"], parent_limit,data),
                 "color": get_specific_node_color("Superclasses")  # Set specific color for "Superclasses"
             },
             {
                 "name": "Subclasses",
-                "children": find_children(filtered_data["uniqueName"], children_limit, data),
+                "children": find_children(filtered_data["uniqueName"], children_limit,data),
                 "color": get_specific_node_color("Subclasses")  # Set specific color for "Subclasses"
             }
         ],
         "color": "red",  # The searched node remains red
-        "description": filtered_data["description"],
-        "types": filtered_data["types"]
-        
+        "description": filtered_data.get("description", "No description available."),
+        "types": filtered_data.get("types", "Unknown")
     }
 
     # Convert hierarchical data to JSON format
