@@ -47,6 +47,7 @@ def display_networkx_plot(data, search_term, parent_limit, children_limit):
     def find_parents(node_name, level, visited=None):
         if visited is None:
             visited = set()
+        # Base case: stop recursion if no more levels to traverse or node already
         if level == 0 or node_name in visited:
             return set()
         visited.add(node_name)
@@ -65,6 +66,7 @@ def display_networkx_plot(data, search_term, parent_limit, children_limit):
     def find_children(node_name, level, visited=None):
         if visited is None:
             visited = set()
+        # Base case: stop recursion if no more levels to traverse or node already
         if level == 0 or node_name in visited:
             return set()
         visited.add(node_name)
