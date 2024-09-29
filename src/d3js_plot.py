@@ -146,25 +146,40 @@ def display_d3js_plot(data, search_term, parent_limit, children_limit):
     # Display the D3.js graph with node descriptions on click, arrows on links, curved lines, a popup animation on hover, and panning/zooming
     components.html(
         """
-        <div id="d3-container" style="height: 400px; padding: 0; margin: 0; 
+    <!-- D3 Container -->
+<div id="d3-container" style="height: 425px; padding: 0; margin: 0; 
     border: 5px solid transparent;  /* Create space for the border */
     border-image: linear-gradient(90deg, #FFD700, #002855) 1;  /* Gradient matching NLP TLP logo */
     box-sizing: border-box; /* Ensure padding and border are included in width and height calculations */
     box-shadow: 0 0 10px rgba(0,0,0,0.05); overflow: hidden;">
-        </div>
-        <div style="display: flex; justify-content: center; align-items: center; margin-top: 20px;">
-                <button id="fullscreen-btn" onclick="toggleFullscreen()" style="
-                    padding: 10px 20px; 
-                    font-size: 16px; 
-                    background: linear-gradient(90deg, #FFD700, #002855);  /* Gradient from light blue to yellow */
-                    color: white;  /* Text color */
-                    border: 3px solid #002855;  /* Navy blue border */
-                    border-radius: 5px; 
-                    cursor: pointer; 
-                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-                    Go Fullscreen
-                </button>
-            </div>
+</div>
+
+<!-- Fullscreen Button below the D3 container -->
+<div style="display: flex; justify-content: center; align-items: center; margin-top: 20px;">
+    <button id="fullscreen-btn" onclick="toggleFullscreen()" style="
+        padding: 10px 20px; 
+        font-size: 16px; 
+        background: linear-gradient(90deg, #FFD700, #002855);  /* Gradient from light blue to yellow */
+        color: white;  /* Text color */
+        border: 3px solid #002855;  /* Navy blue border */
+        border-radius: 5px; 
+        cursor: pointer; 
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+        Go Fullscreen
+    </button>
+</div>
+
+<!-- Footer styled similar to the D3 container -->
+<div style="text-align: center; width: 100%; padding: 10px 0; margin-top: 20px;
+    box-sizing: border-box; /* Ensure padding and border are included in width and height calculations */
+    box-shadow: 0 0 10px rgba(0,0,0,0.05); overflow: hidden;
+    font-size: 14px; background-color: white; /* Ensure background color for fixed footer */
+    color: #002855; /* Navy blue text color */
+    ">
+    &copy;2024, Made For <b>"UWA NLP-TLP Group"</b>, Designed and Developed by <b>Manish Varada Reddy, Melo Xue, 
+    Shanmugapriya Sankarraj, Xudong Ying, Yu Xia, Zihan Zhang</b>.
+</div>
+
 
             <script>
                 function toggleFullscreen() {
@@ -428,5 +443,5 @@ def display_d3js_plot(data, search_term, parent_limit, children_limit):
 
         </script>
         """, 
-        height=490
+        height=550
     )

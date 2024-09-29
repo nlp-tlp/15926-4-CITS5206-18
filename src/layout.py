@@ -9,16 +9,6 @@ def add_custom_css():
     st.markdown(
         """
         <style>
-        /* Remove padding from the block container */
-        div.block-container {
-            padding-top: 1 !important; /* Remove top padding */
-            padding-bottom: 0 !important; /* Remove bottom padding */
-        }
-
-        /* Optional: Adjust other margins or paddings if needed */
-        div.block-container > div {
-            margin: 0 !important; /* Remove margins from inner divs if necessary */
-        }
         /* Sidebar width is set here */
         .sidebar {
             width: 300px;
@@ -109,16 +99,5 @@ def add_custom_css():
         }
         </style>
         """,
-        unsafe_allow_html=True
-    )
-
-def end_main_content_wrapper():
-    """Close the main content wrapper and add the footer within the content area."""
-    st.markdown(
-        '''
-        <div class="content-footer">
-            &copy;2024, Made For <b>"UWA NLP-TLP Group"</b>, Designed and Developed by <b>Manish Varada Reddy, Melo Xue, Shanmugapriya Sankarraj, Xudong Ying, Yu Xia, Zihan Zhang</b>.
-        </div>
-        ''',
         unsafe_allow_html=True
     )

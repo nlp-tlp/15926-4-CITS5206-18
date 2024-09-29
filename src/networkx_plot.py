@@ -128,28 +128,43 @@ def display_networkx_plot(data, search_term, parent_limit, children_limit):
 
     # JavaScript for handling node clicks in NetworkX Plot
     components.html(f"""
-        <div id="networkx-container" style="height: 400px; padding: 0; margin: 0; 
-    border: 5px solid transparent;  /* Create space for the border */
-    border-image: linear-gradient(90deg, #FFD700, #002855) 1;  /* Gradient matching NLP TLP logo */
-    box-sizing: border-box; /* Ensure padding and border are included in width and height calculations */
-    box-shadow: 0 0 10px rgba(0,0,0,0.05); overflow: hidden;">
-            {graph_html}  <!-- Embed PyVis graph -->
-        </div>
-        
-        <div style="display: flex; justify-content: center; align-items: center; margin-top: 20px;">
-                <button id="fullscreen-btn" onclick="toggleFullscreen()" style="
-                    padding: 10px 20px; 
-                    font-size: 16px; 
-                    background: linear-gradient(90deg, #FFD700, #002855);  /* Gradient from light blue to yellow */
-                    color: white;  /* Text color */
-                    border: 3px solid #002855;  /* Navy blue border */
-                    border-radius: 5px; 
-                    cursor: pointer; 
-                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-                    Go Fullscreen
-                </button>
-        </div>
+<div id="content-wrapper" style="display: flex; flex-direction: column; height: 100vh; padding: 0; margin: 0; box-sizing: border-box;">
+    
+    <!-- NetworkX Container -->
+    <div id="networkx-container" style="flex-grow: 1; padding: 0; margin: 0; 
+        border: 5px solid transparent;  /* Create space for the border */
+        border-image: linear-gradient(90deg, #FFD700, #002855) 1;  /* Gradient matching NLP TLP logo */
+        box-sizing: border-box; /* Ensure padding and border are included in width and height calculations */
+        box-shadow: 0 0 10px rgba(0,0,0,0.05); overflow: hidden;">
+        {graph_html}  <!-- Embed PyVis graph -->
+    </div>
 
+    <!-- Go Fullscreen Button below the NetworkX container -->
+    <div style="display: flex; justify-content: center; align-items: center; padding: 10px 0; margin: 0;">
+        <button id="fullscreen-btn" onclick="toggleFullscreen()" style="
+            padding: 10px 20px; 
+            font-size: 16px; 
+            background: linear-gradient(90deg, #FFD700, #002855);  /* Gradient from light blue to yellow */
+            color: white;  /* Text color */
+            border: 3px solid #002855;  /* Navy blue border */
+            border-radius: 5px; 
+            cursor: pointer; 
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+            Go Fullscreen
+        </button>
+    </div>
+
+<!-- Footer styled similar to the D3 container -->
+<div style="text-align: center; width: 100%; padding: 10px 0; margin-top: 20px;
+    box-sizing: border-box; /* Ensure padding and border are included in width and height calculations */
+    box-shadow: 0 0 10px rgba(0,0,0,0.05); overflow: hidden;
+    font-size: 14px; background-color: white; /* Ensure background color for fixed footer */
+    color: #002855; /* Navy blue text color */
+    ">
+    &copy;2024, Made For <b>"UWA NLP-TLP Group"</b>, Designed and Developed by <b>Manish Varada Reddy, Melo Xue, 
+    Shanmugapriya Sankarraj, Xudong Ying, Yu Xia, Zihan Zhang</b>.
+</div>
+</div>
 
         <script>
             function toggleFullscreen() {{
@@ -199,4 +214,4 @@ def display_networkx_plot(data, search_term, parent_limit, children_limit):
                 }}
             }});
         </script>
-    """, height=480)
+    """, height=550)
