@@ -146,7 +146,7 @@ def display_d3js_plot(data, search_term, parent_limit, children_limit):
     # Display the D3.js graph with node descriptions on click, arrows on links, curved lines, a popup animation on hover, and panning/zooming
     components.html(
         """
-        <div id="d3-container" style="height: 600px; padding: 0; margin: 0; 
+        <div id="d3-container" style="height: 400px; padding: 0; margin: 0; 
     border: 5px solid transparent;  /* Create space for the border */
     border-image: linear-gradient(90deg, #FFD700, #002855) 1;  /* Gradient matching NLP TLP logo */
     box-sizing: border-box; /* Ensure padding and border are included in width and height calculations */
@@ -178,7 +178,7 @@ def display_d3js_plot(data, search_term, parent_limit, children_limit):
                         });
                     } else {
                         elem.style.width = "";  // Reset to default width
-                        elem.style.height = "";  // Reset to default height
+                        elem.style.height = "400px";  // Reset to default height
                         document.exitFullscreen();
                     }
                 }
@@ -190,7 +190,7 @@ def display_d3js_plot(data, search_term, parent_limit, children_limit):
 
                     if (!document.fullscreenElement) {
                         elem.style.width = "100%";  // Reset to default width
-                        elem.style.height = "600px";  // Reset to default height
+                        elem.style.height = "400px";  // Reset to default height
                         buttonContainer.style.display = "flex";  // Show the button after exiting fullscreen
                     }
                 });
@@ -428,5 +428,5 @@ def display_d3js_plot(data, search_term, parent_limit, children_limit):
 
         </script>
         """, 
-        height=1000
+        height=490
     )
