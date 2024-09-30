@@ -64,7 +64,7 @@ def add_custom_css():
         .model-diagram {
             position: relative;
             top: 50px; /* Adjust this value if your header height changes */
-            height: calc(100vh - 120px); /* 120px for header and footer combined */
+            height: 100vh;
             margin: 20px 0;
             overflow-y: auto; /* Enable scrolling if content exceeds the height */
         }
