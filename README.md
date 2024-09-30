@@ -13,6 +13,7 @@ This project is an interactive visualization tool for the ISO 15926-4 standard, 
   - [Running the Application After Initial Setup](#running-the-application-after-initial-setup)
     - [Mac/Linux:](#maclinux-1)
     - [Windows:](#windows-1)
+  - [Filter Rule](#filter-rule)
   - [Project Structure](#project-structure)
   - [Usage](#usage)
   - [Modules](#modules)
@@ -190,6 +191,14 @@ To run this project locally, follow these steps:
    deactivate
    ```
 
+## Filter Rule
+
+The filter rule used in the application is as follows:
+
+- Data entries without **superclass**, **subclass**, **type**, and **description** will be excluded from the visualization.
+
+This ensures that the visualized data maintains its integrity and relevance for exploring relationships within the ISO 15926-4 standard.
+
 ## Project Structure
 
 ```
@@ -231,7 +240,11 @@ To use the interactive visualization tool:
 4. **Search History**:
    - The search history is displayed in the sidebar.
    - Click on a history item to restore the previous search state.
-5. **Enable Comparative Analysis**:
+5. **Implemented Functions**:
+   - **Click on a node**: When you click on a node, its 'Definition' and 'Type' are displayed in the sidebar.
+   - **Mouse hover on a node**: Hovering over a node displays a floating window with the node's 'Definition' over it.
+   - **Fullscreen mode**: Click the "Fullscreen" button to enable the fullscreen view of the model. Press "Esc" to exit fullscreen mode.
+6. **Enable Comparative Analysis**:
    - Use the `Enable Comparative` button to enable the comparative analysis mode.
    - Select two nodes to compare their hierarchical relationships.
    - The nodes are highlighted in the graph for easy comparison.

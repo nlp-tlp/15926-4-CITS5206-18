@@ -115,43 +115,48 @@ def end_main_content_wrapper():
     )
 
 def add_documentation_section():
-        with st.expander("📚**DOCUMENTATION**📚"):
-            st.markdown("""
-            ## **Overview**
-            The Interactive Visualization Tool for the ISO 15926-4 Standard helps users explore hierarchical data relationships with D3.js and NetworkX visualizations. The tool is built with Streamlit, offering a user-friendly web interface. It visualizes nodes as unique elements and edges as superclass-subclass relationships. The interactive functionality allows users to explore data structures dynamically.
+    with st.expander("📚**DOCUMENTATION**📚"):
+        st.markdown("""
+        ## **Overview**
+        The Interactive Visualization Tool for the ISO 15926-4 Standard helps users explore complex data relationships using both NetworkX and D3.js visualizations. The tool is built with Streamlit, offering an intuitive web interface to visualize nodes and edges representing superclass-subclass relationships. The interactive functionality allows users to dynamically explore the data structures.
 
-            ## **Search Options**
-            - **Search by Unique Name**: Use the search bar to focus on a specific node.
-            - **Number of Superclass Levels**: Adjust how many levels of superclass nodes to display.
-            - **Number of Subclass Levels**: Adjust how many levels of subclass nodes to display.
+        ## **Search Options**
+        - **Search by Unique Name**: Use the search bar to locate a specific node by its unique name.
+        - **Number of Superclass Levels**: Adjust how many levels of superclass nodes to display.
+        - **Number of Subclass Levels**: Adjust how many levels of subclass nodes to display.
 
-            ## **Graph Interaction Controls**
-            1. **Network Plot**:
-                - **Click on Nodes**: Displays the node’s description in the sidebar.
-                - **Hover Effects**: Hovering on a node shows a tooltip with the node’s name and description.
-                - **Node Colors**:
-                    - **Red**: Focus node.
-                    - **Green**: Superclass nodes.
-                    - **Blue**: Subclass nodes.
+        ## **Graph Interaction Controls**
+        ### 1. **NetworkX Plot**:
+            - **Click on Nodes**: Displays the node's 'Definition' and 'Type' in the sidebar.
+            - **Hover Effects**: Hovering over a node shows a floating window with the node's 'Definition'.
+            - **Node Colors**:
+                - **Red**: Focus node.
+                - **Green**: Superclass nodes.
+                - **Blue**: Subclass nodes.
+        
+        ### 2. **D3.js Tree Plot**:
+            - **Click on Nodes**: Highlights the node and displays its 'Definition' and 'Type'.
+            - **Hover Effects**: Hovering over a node shows a floating tooltip with the node's 'Definition'.
+            - **Drag and Drop**: Drag nodes to adjust their positions for better exploration.
+            - **Zoom and Pan**: Supports zooming in/out and panning across the graph for better viewing.
+            - **Branch Colors**:
+                - **Yellow**: Connects superclass nodes.
+                - **Blue**: Connects subclass nodes.
+        
+        ### 3. **Fullscreen Mode**:
+            - **Fullscreen Button**: Click the 'Fullscreen' button to enable fullscreen mode for the graph.
+            - **Exit Fullscreen**: Press 'Esc' to exit fullscreen mode.
 
-            2. **Tree Plot**:
-                - **Click on Nodes**: Highlights the node and displays its description.
-                - **Drag and Drop**: Drag nodes to adjust their positions for better exploration.
-                - **Zoom and Pan**: Supports zooming in/out and panning across the graph.
-                - **Branch Colors**:
-                    - **Yellow**: Connects superclass nodes.
-                    - **Blue**: Connects subclass nodes.
+        ## **How to Use the Tool**
+        1. **Input Search Criteria**:
+            - **Unique Name**: Focus on a specific node by entering its unique name.
+            - **Superclass/Subclass Levels**: Adjust the number of superclass/subclass nodes to display.
+        2. **Explore the Graph**:
+            - Click on nodes to display their 'Definition' and 'Type' in the sidebar.
+            - Hover over nodes to see a floating window displaying their 'Definition'.
+            - Use the side panel to dynamically change the number of displayed superclass and subclass nodes.
+            - Drag, zoom, and pan to explore relationships.
+            - Enter fullscreen mode for an immersive experience, and press 'Esc' to exit fullscreen.
 
-            ## **How to Use the Tool**
-            1. **Launch the Application**:
-                - Run the app using the `streamlit run src/main.py` command.
-            2. **Input Search Criteria**:
-                - **Unique Name**: Focus on a specific node by entering its name.
-                - **Superclass/Subclass Levels**: Adjust the number of superclass/subclass nodes to display.
-            3. **Explore the Graph**:
-                - Click on nodes for descriptions.
-                - Use the side panel to dynamically change the displayed number of superclass and subclass nodes.
-                - Drag, zoom, and pan to explore the hierarchical relationships.
-            
-            Enjoy exploring the hierarchical data with the interactive visualization tool!
-            """)
+        Enjoy exploring the hierarchical data with the interactive visualization tool!
+        """)
