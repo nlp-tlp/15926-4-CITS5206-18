@@ -80,7 +80,7 @@ def display_networkx_plot(data, search_term, parent_limit, children_limit):
         return children
 
     # Initialize PyVis network graph with white background and black text
-    net = Network(height="73vh", width="100vw", bgcolor="#ffffff", font_color="black", directed=True)
+    net = Network(height="100vh", width="100vw", bgcolor="#ffffff", font_color="black", directed=True)
 
     # Filtering logic for displaying nodes up to specified parent and child levels from the search term
     if search_term and search_term in G:
@@ -125,7 +125,7 @@ def display_networkx_plot(data, search_term, parent_limit, children_limit):
 
     # JavaScript for handling node clicks in NetworkX Plot
     components.html(f"""
-        <div id="networkx-container" style="height:700px; padding: 0; margin: 0; 
+        <div id="networkx-container" style="height:700px; padding: 0; margin: 10px 0 0 0; 
     border: 5px solid transparent;  /* Create space for the border */
     border-image: linear-gradient(90deg, #FFD700, #002855) 1;  /* Gradient matching NLP TLP logo */
     box-sizing: border-box; /* Ensure padding and border are included in width and height calculations */
