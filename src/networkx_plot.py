@@ -155,16 +155,6 @@ def display_networkx_plot(data, search_term, parent_limit, children_limit):
                 </button>
         </div>
 
-<!-- Footer styled similar to the D3 container -->
-<div style="text-align: center; width: 100%; padding: 10px 0; margin-top: 20px;
-    box-sizing: border-box; /* Ensure padding and border are included in width and height calculations */
-    box-shadow: 0 0 10px rgba(0,0,0,0.05); overflow: hidden;
-    font-size: 14px; background-color: white; /* Ensure background color for fixed footer */
-    color: #002855; /* Navy blue text color */
-    ">
-    &copy;2024, Made For <b>"UWA NLP-TLP Group"</b>, Designed and Developed by <b>Manish Varada Reddy, Melo Xue, 
-    Shanmugapriya Sankarraj, Xudong Ying, Yu Xia, Zihan Zhang</b>.
-</div>
 </div>
 
         <script>

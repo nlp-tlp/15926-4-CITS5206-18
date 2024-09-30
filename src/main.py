@@ -1,5 +1,5 @@
 import streamlit as st
-from layout import set_page_layout, add_custom_css
+from layout import set_page_layout, add_custom_css,end_main_content_wrapper
 from data_handler import load_data, extract_unique_names
 from networkx_plot import display_networkx_plot
 from d3js_plot import display_d3js_plot
@@ -214,3 +214,4 @@ else:
     elif st.session_state.page == "D3.js Plot":
         display_d3js_plot(data, search_term, parent_limit, children_limit)
 
+end_main_content_wrapper()

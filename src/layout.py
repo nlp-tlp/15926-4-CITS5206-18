@@ -101,3 +101,15 @@ def add_custom_css():
         """,
         unsafe_allow_html=True
     )
+
+
+def end_main_content_wrapper():
+    """Close the main content wrapper and add the footer within the content area."""
+    st.markdown(
+        '''
+        <div class="content-footer">
+            &copy;2024, Made For <b>"UWA NLP-TLP Group"</b>, Designed and Developed by <b>Manish Varada Reddy, Melo Xue, Shanmugapriya Sankarraj, Xudong Ying, Yu Xia, Zihan Zhang</b>.
+        </div>
+        ''',
+        unsafe_allow_html=True
+    )
