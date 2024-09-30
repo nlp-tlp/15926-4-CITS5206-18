@@ -57,6 +57,7 @@ To run this project locally, follow these steps:
 3. **Install Required Dependencies:**
 
    ```bash
+   pip install --upgrade pip
    pip install -r requirements.txt
    ```
 
@@ -74,7 +75,13 @@ To run this project locally, follow these steps:
    streamlit run src/main.py
    ```
 
-6. **Exit the Virtual Environment** (when finished):
+6. **Terminate the Application:**
+
+   ```bash
+   Control + C
+   ```
+
+7. **Exit the Virtual Environment** (when finished):
 
    ```bash
    deactivate
@@ -111,13 +118,27 @@ To run this project locally, follow these steps:
    python scripts/plugin_check.py
    ```
 
-5. **Run the Application:**
+5.	**(Optional) Install Watchdog for Better Performance:**
+   For better performance, it is recommended to install the Watchdog module, which improves file monitoring. This requires the installation of Xcode command line tools (for macOS users):
+
+   ```bash
+   xcode-select --install
+   pip install watchdog
+   ```
+
+6. **Run the Application:**
 
    ```bash
    streamlit run src/main.py
    ```
 
-6. **Exit the Virtual Environment** (when finished):
+7. **Terminate the Application:**
+
+   ```bash
+   Control + C
+   ```
+
+8. **Exit the Virtual Environment** (when finished):
 
    ```bash
    deactivate
@@ -157,7 +178,13 @@ To run this project locally, follow these steps:
    streamlit run src\main.py
    ```
 
-3. **Exit the Virtual Environment**:
+3. **Terminate the Application:**
+
+   ```bash
+   Control + C
+   ```
+
+4. **Exit the Virtual Environment**:
 
    ```bash
    deactivate
@@ -233,8 +260,6 @@ If the app does not run or you encounter issues, please follow these troubleshoo
 3. **Reinstall Dependencies**:
    If any dependency is missing, you can install them individually using `pip install <dependency-name>`.
    
-4. **Common Errors**:
-   If you encounter issues related to missing packages or initialization failures, please refer to the documentation in `docs/meeting_minutes` for troubleshooting steps specific to Mac and Windows systems.
 
 ## Contributing
 
