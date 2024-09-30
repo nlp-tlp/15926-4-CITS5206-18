@@ -1,10 +1,11 @@
 import streamlit as st
-from layout import set_page_layout, add_custom_css,end_main_content_wrapper
+from layout import set_page_layout, add_custom_css,end_main_content_wrapper,add_documentation_section
 from data_handler import load_data, extract_unique_names
 from networkx_plot import display_networkx_plot
 from d3js_plot import display_d3js_plot
 import os
 from typing import List
+
 
  # Search history functions
 def initialize_search_history() -> None:
@@ -35,6 +36,8 @@ def display_search_history() -> None:
 
 # Set the page layout to wide
 set_page_layout()
+
+add_documentation_section()
 
 # Add custom CSS for positioning the logo and footer
 add_custom_css()
@@ -215,3 +218,4 @@ else:
         display_d3js_plot(data, search_term, parent_limit, children_limit)
 
 end_main_content_wrapper()
+

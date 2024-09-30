@@ -8,9 +8,6 @@ import streamlit.components.v1 as components
 
 def display_networkx_plot(data, search_term, parent_limit, children_limit):
     """Display the NetworkX plot with user-defined parameters."""
-    
-    # Header for the NetworkX Plot section
-    st.markdown("<h2 style='padding-bottom: 24px;'>Network Plot</h2>", unsafe_allow_html=True)
 
      # Create a mapping from uniqueName to node data for quick access
     uniqueName_to_node = { item['uniqueName']: item for item in data }
@@ -128,7 +125,7 @@ def display_networkx_plot(data, search_term, parent_limit, children_limit):
 
     # JavaScript for handling node clicks in NetworkX Plot
     components.html(f"""
-        <div id="networkx-container" style="height: 600px; padding: 0; margin: 0; 
+        <div id="networkx-container" style="height:700px; padding: 0; margin: 0; 
     border: 5px solid transparent;  /* Create space for the border */
     border-image: linear-gradient(90deg, #FFD700, #002855) 1;  /* Gradient matching NLP TLP logo */
     box-sizing: border-box; /* Ensure padding and border are included in width and height calculations */
