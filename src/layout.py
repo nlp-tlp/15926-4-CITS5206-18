@@ -1,5 +1,4 @@
 import streamlit as st
-import streamlit.components.v1 as components
 
 def set_page_layout():
     """Set the Streamlit page layout to wide."""
@@ -106,7 +105,14 @@ def add_custom_css():
 
 def end_main_content_wrapper():
     """Close the main content wrapper and add the footer within the content area."""
-    components.html(""" <div style="text-align: center;">&copy;2024, Made For <b>"UWA NLP-TLP Group"</b>, Designed and Developed by <b>Manish Varada Reddy, Melo Xue, Shanmugapriya Sankarraj, Xudong Ying, Yu Xia, Zihan Zhang</b>.</div>""", height=70)
+    st.markdown(
+        '''
+        <div class="content-footer">
+            &copy;2024, Made For <b>"UWA NLP-TLP Group"</b>, Designed and Developed by <b>Manish Varada Reddy, Melo Xue, Shanmugapriya Sankarraj, Xudong Ying, Yu Xia, Zihan Zhang</b>.
+        </div>
+        ''',
+        unsafe_allow_html=True
+    )
 
 def add_documentation_section():
         with st.expander("📚**DOCUMENTATION**📚"):
