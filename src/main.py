@@ -59,6 +59,9 @@ if st.sidebar.button("TREE Plot"):
 if st.sidebar.button("NETWORK Plot"):
     st.session_state.page = "NetworkX Plot"
 
+# Add a checkbox to enable comparative view
+enable_comparative = st.sidebar.checkbox("Enable Comparative View")
+
 # Construct absolute path to the JSON file
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 json_path = os.path.join(base_dir, 'data', 'final_output.json')
@@ -146,9 +149,6 @@ with st.sidebar:
 # Display search history after Node Types
 st.sidebar.header("Search History")
 display_search_history()
-    
-# Add a checkbox to enable comparative view
-enable_comparative = st.sidebar.checkbox("Enable Comparative View")
 
 if enable_comparative:
     # Create two columns for selecting nodes to compare
@@ -218,4 +218,3 @@ else:
         display_d3js_plot(data, search_term, parent_limit, children_limit)
 
 end_main_content_wrapper()
-

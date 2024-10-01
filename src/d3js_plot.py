@@ -162,7 +162,7 @@ def display_d3js_plot(data, search_term, parent_limit, children_limit):
         border-radius: 5px; 
         cursor: pointer; 
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-        Go Fullscreen
+        Go Fullscreen For TREE PLOT
     </button>
 </div>
 
