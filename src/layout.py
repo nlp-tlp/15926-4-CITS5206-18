@@ -118,45 +118,77 @@ def add_documentation_section():
     with st.expander("📚**DOCUMENTATION**📚"):
         st.markdown("""
         ## **Overview**
-        The Interactive Visualization Tool for the ISO 15926-4 Standard helps users explore complex data relationships using both NetworkX and D3.js visualizations. The tool is built with Streamlit, offering an intuitive web interface to visualize nodes and edges representing superclass-subclass relationships. The interactive functionality allows users to dynamically explore the data structures.
+        The Interactive Visualization Tool for the ISO 15926-4 Standard helps users explore complex data relationships through two types of visualizations: a **Force-Directed Model** using NetworkX and a **Tree Model** using D3.js. These visualizations offer an interactive way to analyze and understand hierarchical relationships between entities.
 
-        ## **Search Options**
-        - **Search by Unique Name**: Use the search bar to locate a specific node by its unique name.
-        - **Number of Superclass Levels**: Adjust how many levels of superclass nodes to display.
-        - **Number of Subclass Levels**: Adjust how many levels of subclass nodes to display.
+        ## **Visualization Models**
 
-        ## **Graph Interaction Controls**
-        ### 1. **NetworkX Plot**:
-            - **Click on Nodes**: Displays the node's 'Definition' and 'Type' in the sidebar.
-            - **Hover Effects**: Hovering over a node shows a floating window with the node's 'Definition'.
-            - **Node Colors**:
-                - **Red**: Focus node.
-                - **Green**: Superclass nodes.
-                - **Blue**: Subclass nodes.
-        
-        ### 2. **D3.js Tree Plot**:
-            - **Click on Nodes**: Highlights the node and displays its 'Definition' and 'Type'.
-            - **Hover Effects**: Hovering over a node shows a floating tooltip with the node's 'Definition'.
-            - **Drag and Drop**: Drag nodes to adjust their positions for better exploration.
-            - **Zoom and Pan**: Supports zooming in/out and panning across the graph for better viewing.
-            - **Branch Colors**:
-                - **Yellow**: Connects superclass nodes.
-                - **Blue**: Connects subclass nodes.
-        
-        ### 3. **Fullscreen Mode**:
-            - **Fullscreen Button**: Click the 'Fullscreen' button to enable fullscreen mode for the graph.
-            - **Exit Fullscreen**: Press 'Esc' to exit fullscreen mode.
+        ### 1. **Force-Directed Model (Network Plot)**
+        The Force-Directed Model presents a dynamic layout where nodes are attracted or repelled based on their relationships, creating an organic, real-time visualization of data connections.
 
-        ## **How to Use the Tool**
-        1. **Input Search Criteria**:
-            - **Unique Name**: Focus on a specific node by entering its unique name.
-            - **Superclass/Subclass Levels**: Adjust the number of superclass/subclass nodes to display.
-        2. **Explore the Graph**:
-            - Click on nodes to display their 'Definition' and 'Type' in the sidebar.
-            - Hover over nodes to see a floating window displaying their 'Definition'.
-            - Use the side panel to dynamically change the number of displayed superclass and subclass nodes.
-            - Drag, zoom, and pan to explore relationships.
-            - Enter fullscreen mode for an immersive experience, and press 'Esc' to exit fullscreen.
+        - **Dynamic Node Layout**: Nodes and edges rearrange themselves based on an algorithm that simulates physical forces, which helps visualize how entities are related in a flexible, interconnected manner.
+        - **Color Legend**:
+            - **Red**: Focus node (the node currently searched).
+            - **Green**: Superclass nodes (parent entities).
+            - **Blue**: Subclass nodes (child entities).
 
-        Enjoy exploring the hierarchical data with the interactive visualization tool!
+        ### 2. **Tree Model (Tree Plot)**
+        The Tree Model organizes data hierarchically, where nodes are displayed in a structured tree format, with parent nodes connecting to child nodes.
+
+        - **Static Hierarchical Layout**: This model arranges the nodes in a fixed, tree-like structure, making it easier to trace parent-child relationships and explore depth in the hierarchy.
+        - **Color Legend**:
+            - **Yellow**: Lines connecting superclass nodes (showing the parent-level relationships).
+            - **Blue**: Lines connecting subclass nodes (showing child-level relationships).
+
+        ## **Key Features**
+        - **Search by Node Name**: Use the search bar to locate specific nodes by entering their name. The visualization will focus on the selected node.
+        - **Filter by Levels**: Adjust the number of superclass or subclass levels displayed in the graph using the controls in the sidebar. This helps you focus on the immediate relationships or explore broader contexts.
+        - **Search History**: Previous search results are stored in the sidebar. You can click on any previous search to restore the visualization state.
+        - **Comparative Analysis**: Click the 'Enable Comparative' button to compare two nodes and their hierarchical relationships. Both nodes will be highlighted for easy comparison in the visualization.
+        - **Navigation** Click on different model buttons to switch between the Force-Directed and Tree models for different perspectives on the data.
+                    
+        ## **Interaction Features**
+        - **Click on a Node**: Displays the node's 'Definition' and 'Type' in the sidebar.
+        - **Hover Over a Node**: Displays a floating tooltip showing the node's 'Definition' directly over it.
+        - **Zoom and Pan**: Use your mouse or trackpad to zoom in/out and pan around the graph for detailed exploration.
+        - **Fullscreen Mode**: Click the 'Fullscreen' button to enlarge the model for better visibility, and press 'Esc' to exit fullscreen.
+        - **Export Graph**: Save the current graph as an image for reference or sharing with others.
+
+        ## **Usage Guide**
+        By following these steps, you can fully engage with the features of the Interactive Visualization Tool. From initial exploration to advanced comparison and export options, the tool is built to provide an intuitive and comprehensive way to navigate complex data relationships within the ISO 15926-4 dataset.
+
+        ### Step 1: **Searching and Filtering Data**
+        - **Find specific nodes and customize your view**:
+            - **Search by Node Name**: Use the search bar to find specific nodes. Once you type the node's name, the visualization will focus on that node, making it easy to navigate directly to the entity you want to analyze.
+            - **Filter by Levels**: Adjust the number of superclass and subclass levels displayed in the graph using the sidebar controls. This feature helps you focus on a small subset of relationships or explore a broader context by increasing the number of levels displayed.
+
+        ### Step 2: **Switching Between Visualization Models**
+        - **Toggle between the Force-Directed and Tree Models**:
+            - Use the buttons under the navigation section to switch between the two models:
+                - **Network Plot** (Force-Directed Model): A dynamic, interconnected visualization.
+                - **Tree Plot** (D3.js Tree Model): A structured, hierarchical layout.
+            - By default, the tool displays the **Tree Plot** when first loaded.
+
+        ### Step 3: **Maximizing Visual Space**
+        - **Enhance your view of the graph**:
+            - **Fullscreen Mode**: For a better view, click the 'Fullscreen' button to expand the graph to fill your screen. This is especially helpful when dealing with large datasets or when presenting to others. To exit fullscreen, simply press 'Esc'.
+
+        ### Step 4: **Exploring the Graph**
+        - **Interact with nodes and explore their relationships**:
+            - **Click on any Node**: When you click a node, its 'Definition' and 'Type' will be displayed in the sidebar. This helps you examine the specific characteristics of the node.
+            - **Hover Over a Node**: Hovering over a node shows a floating tooltip with its 'Definition', giving you quick insights without needing to click.
+            - **Zoom and Pan**: Use your mouse scroll or trackpad to zoom in and out of the graph. You can also click and drag to pan around the graph, helping you explore large datasets.
+
+        ### Step 5: **Tracking and Revisiting Searches**
+        - **Use the search history to revisit nodes**:
+            - **Search History**: Every time you search for a node, the tool stores that result in the sidebar. You can click on any past search to instantly restore the graph to that state. This is useful for tracking your exploration and easily comparing previous findings.
+
+        ### Step 6: **Comparing Multiple Nodes**
+        - **Compare two nodes and their relationships**:
+            - **Comparative Analysis**: Click the 'Enable Comparative' button to select two nodes for comparison. Both nodes will be highlighted in the graph, making it easy to visually compare their positions and hierarchical relationships.
+
+        ### Step 7: **Exporting Your Graph**
+        - **Save your findings**:
+            - **Export Graph**: Once you’ve explored the graph and found key insights, you can export the current view as an image. This is useful for documentation, sharing with others, or including in reports or presentations.
+                
+        This tool is designed to make it easy to visualize and interact with ISO 15926-4 data, helping users explore complex relationships with dynamic, intuitive visualizations. Enjoy your journey into the hierarchical world of data!
         """)
