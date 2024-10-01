@@ -154,7 +154,7 @@ def display_d3js_plot(data, search_term, parent_limit, children_limit):
 <!-- Fullscreen Button below the D3 container -->
 <div style="display: flex; justify-content: center; align-items: center; margin-top: 20px;">
     <button id="fullscreen-btn" onclick="toggleFullscreen()" style="
-        padding: 10px 20px; 
+        padding: 15px 20px; 
         font-size: 16px; 
         background: linear-gradient(90deg, #FFD700, #002855);  /* Gradient from light blue to yellow */
         color: white;  /* Text color */
