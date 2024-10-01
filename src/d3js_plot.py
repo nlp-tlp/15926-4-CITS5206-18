@@ -180,7 +180,7 @@ def display_d3js_plot(data, search_term, parent_limit, children_limit):
                         });
                     } else {
                         elem.style.width = "";  // Reset to default width
-                        elem.style.height = "400px";  // Reset to default height
+                        elem.style.height = "";  // Reset to default height
                         document.exitFullscreen();
                     }
                 }
@@ -192,7 +192,7 @@ def display_d3js_plot(data, search_term, parent_limit, children_limit):
 
                     if (!document.fullscreenElement) {
                         elem.style.width = "100%";  // Reset to default width
-                        elem.style.height = "400px";  // Reset to default height
+                        elem.style.height = "700px";  // Reset to default height
                         buttonContainer.style.display = "flex";  // Show the button after exiting fullscreen
                     }
                 });
