@@ -10,7 +10,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import TimeoutException
 
 # Path to ChromeDriver -need to be changed to the local chromedriver path
-driver_path = "C:/Users/shanm/Downloads/chromedriver-win64/chromedriver-win64/chromedriver.exe"
+driver_path = "/Users/imac/Downloads/chromedriver-mac-x64/chromedriver"
 
 @pytest.fixture(scope="module")
 def setup_browser():
@@ -301,7 +301,6 @@ def test_comparative_view(setup_browser):
             if option:
                 option.click()
             #time.sleep(1) 
-            
 
 def test_search_history(setup_browser):
     """Test the search history functionality."""
@@ -349,4 +348,3 @@ def test_chart_type_switching(setup_browser):
     assert tree_container_exists or network_container_exists, "Neither Tree Plot nor Network Plot container was found"
 
     print("Chart switching test passed successfully")
-
