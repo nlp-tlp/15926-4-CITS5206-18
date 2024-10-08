@@ -4,7 +4,7 @@ This project is an interactive visualization tool for the ISO 15926-4 standard, 
 
 ## Table of Contents
 
-- [Project Name: Interactive Visualization Tool for ISO 15926-4 Standard](#project-name-interactive-visualization-tool-for-iso-15926-4-standard)
+- [Project Name: Interactive Visualization Tool for Equipment Reference Data Libraries - Use case on 15926.org RDLs](#project-name-interactive-visualization-tool-for-iso-15926-4-standard)
   - [Table of Contents](#table-of-contents)
   - [Data Retrieval](#data-retrieval)
   - [Installation](#installation)
