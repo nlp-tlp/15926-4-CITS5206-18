@@ -17,38 +17,61 @@ def setup_browser():
     """Set up the Selenium WebDriver."""
     service = Service(driver_path)
     driver = webdriver.Chrome(service=service)
+
     # Open the Streamlit app (make sure it's running)
     driver.get("http://localhost:8501")  
+
     yield driver
     driver.quit()
 
 def test_pageLoad(setup_browser):
     """Test navigation through the Streamlit app."""
     driver = setup_browser
-    
-
     # Wait for the app to load
-    #time.sleep(60)
     WebDriverWait(driver, 10).until(EC.title_contains("main"))
 
     # Test the initial page title
     assert "main" in driver.title  
 
+def wait_for_element(driver, by, value, timeout=20):
+    try:
+        element = WebDriverWait(driver, timeout).until(
+            EC.presence_of_element_located((by, value))
+        )
+        return element
+    except TimeoutException:
+        print(f"Element not found: {by}={value}")
+        return None
+    
+def test_documentation(setup_browser):
+    driver = setup_browser
+    time.sleep(2)
+    # Wait for the element to be clickable
+    summary_element = WebDriverWait(driver, 10).until(
+        EC.element_to_be_clickable((By.TAG_NAME, "summary"))
+    )
+
+    # Click the summary element to expand
+    summary_element.click()
+
+    time.sleep(1)
+
+    # Click the summary element to collapse
+    summary_element.click()
+
     
 def test_search_functionality(setup_browser):
     """Test the search functionality of the Streamlit app."""
     driver = setup_browser
-    #driver.get("http://localhost:8501")
     time.sleep(2)
 
-    # Test the search bar functionality
-    # Locate the input element by role 
+    # Locate the input element by list box 
     search_box = driver.find_element(By.CSS_SELECTOR, "input[aria-autocomplete='list']")
 
     # Click on the input box to activate it 
     search_box.click()
 
-    # Clear the input field (if needed)
+    # Clear the input field 
     search_box.clear()
 
     # Populate the search box to VALVE
@@ -66,7 +89,7 @@ def test_search_functionality(setup_browser):
             option.click()
             break  # Exit the loop after clicking
 
-    time.sleep(10)
+    time.sleep(3)
     # Wait for the Number of levels of SUPERCLASSES to be visible
     number_input = WebDriverWait(driver, 10).until(
         EC.visibility_of_element_located((By.ID, "number_input_1"))
@@ -111,9 +134,23 @@ def test_search_functionality(setup_browser):
     updated_value = number_input.get_attribute("value")
     assert updated_value == "4", f"Number input did not update correctly! Current value: {updated_value}"
 
-    #time.sleep(60)
+def test_level_adjustment(setup_browser):
+    driver = setup_browser
+    #driver.get("http://localhost:8501")
+    time.sleep(1)
 
-    
+    superclass_input = driver.find_elements(By.XPATH, "//input[@aria-label='Number of Levels of Superclass']")
+    subclass_input = driver.find_elements(By.XPATH, "//input[@aria-label='Number of Levels of Subclass']")
+
+    assert len(superclass_input) > 0, "Superclass level input not found"
+    assert len(subclass_input) > 0, "Subclass level input not found"
+
+    print("Level adjustment inputs found successfully")
+
+def test_navig_buttons(setup_browser):
+
+    driver = setup_browser
+    time.sleep(2)
 
     # Switch to Network Plot for the VALVE data
     wait = WebDriverWait(driver, 20)  # 10 seconds timeout
@@ -123,6 +160,28 @@ def test_search_functionality(setup_browser):
     button.click()
     time.sleep(70)  # Wait for the action to take place
 
+    # Switch to the iframe first
+    iframe = driver.find_element(By.TAG_NAME, 'iframe')  # Adjust the selector as necessary
+    driver.switch_to.frame(iframe)
+
+    button = driver.find_element(By.XPATH, "//button[contains(text(), 'Go Fullscreen For NETWORK PLOT')]")
+    driver.execute_script("arguments[0].scrollIntoView(true);", button)
+    button.click()
+    time.sleep(2)
+    driver.switch_to.default_content()
+    
+    try:
+        driver.execute_script("if (document.fullscreenElement) { document.exitFullscreen(); }")
+        time.sleep(1)
+    except Exception as e:
+        print(f"Error when using JavaScript to exit fullscreen: {str(e)}")
+
+    #time.sleep(1)
+
+    
+
+
+
     # Switch to D3 Plot for the VALVE data
     wait = WebDriverWait(driver, 20)  # 10 seconds timeout
     button = wait.until(EC.presence_of_element_located((By.XPATH, "//button[.//p[text()='TREE Plot']]")))
@@ -130,6 +189,31 @@ def test_search_functionality(setup_browser):
     # Click the button
     button.click()
     time.sleep(60)  # Wait for the action to take place
+
+    # Switch to the iframe first
+    iframe = driver.find_element(By.TAG_NAME, 'iframe')  # Adjust the selector as necessary
+    driver.switch_to.frame(iframe)
+
+    button = driver.find_element(By.XPATH, "//button[contains(text(), 'Go Fullscreen For TREE PLOT')]")
+    driver.execute_script("arguments[0].scrollIntoView(true);", button)
+    button.click()
+    time.sleep(2)
+
+    driver.switch_to.default_content()
+    
+    try:
+        driver.execute_script("if (document.fullscreenElement) { document.exitFullscreen(); }")
+        time.sleep(1)
+    except Exception as e:
+        print(f"Error when using JavaScript to exit fullscreen: {str(e)}")
+
+    #time.sleep(1)
+
+    
+
+def test_nodeDesc_nodeTitle(setup_browser):
+    driver = setup_browser
+    time.sleep(2)
 
     # Switch to the iframe first
     iframe = driver.find_element(By.TAG_NAME, 'iframe')  # Adjust the selector as necessary
@@ -184,25 +268,17 @@ def test_search_functionality(setup_browser):
         print("Circle associated with 'VALVE' was successfully clicked.")
     else:
         print("Circle associated with 'VALVE' could not be found.")
-
-
-        
-def wait_for_element(driver, by, value, timeout=20):
-    try:
-        element = WebDriverWait(driver, timeout).until(
-            EC.presence_of_element_located((by, value))
-        )
-        return element
-    except TimeoutException:
-        print(f"Element not found: {by}={value}")
-        return None
+  
+    driver.switch_to.default_content()
 
 def test_comparative_view(setup_browser):
     """Test enabling the comparative view."""
     driver = setup_browser
-    driver.get("http://localhost:8501")
+    #driver.get("http://localhost:8501")
     time.sleep(10) 
     
+    
+
     comparative_checkbox = wait_for_element(driver, By.XPATH, "//label[contains(., 'Enable Comparative View')]//input")
     if comparative_checkbox:
         driver.execute_script("arguments[0].click();", comparative_checkbox)
@@ -224,24 +300,25 @@ def test_comparative_view(setup_browser):
             option = wait_for_element(driver, By.XPATH, "//div[@role='option'][1]")  
             if option:
                 option.click()
-            time.sleep(1) 
+            #time.sleep(1) 
+            
 
 def test_search_history(setup_browser):
     """Test the search history functionality."""
     driver = setup_browser
-    driver.get("http://localhost:8501")
-    time.sleep(10) 
+    #driver.get("http://localhost:8501")
+    time.sleep(5) 
     
     search_box = wait_for_element(driver, By.CSS_SELECTOR, "input[aria-autocomplete='list']")
     if search_box:
         search_box.send_keys("VALVE")
         search_box.send_keys(Keys.RETURN)
-        time.sleep(2)
+        time.sleep(1)
         
         search_box.clear()
         search_box.send_keys("PIPE")
         search_box.send_keys(Keys.RETURN)
-        time.sleep(2)
+        time.sleep(1)
         
         history_items = wait_for_element(driver, By.XPATH, "//div[contains(., 'Recent Searches:')]")
         assert history_items, "Search history not found"
@@ -251,7 +328,7 @@ def test_search_history(setup_browser):
 def test_chart_type_switching(setup_browser):
     """Test switching between Tree Plot and Network Plot."""
     driver = setup_browser
-    driver.get("http://localhost:8501")
+    #driver.get("http://localhost:8501")
     time.sleep(10)  
 
     buttons = driver.find_elements(By.TAG_NAME, "button")
@@ -273,15 +350,3 @@ def test_chart_type_switching(setup_browser):
 
     print("Chart switching test passed successfully")
 
-def test_level_adjustment(setup_browser):
-    driver = setup_browser
-    driver.get("http://localhost:8501")
-    time.sleep(10)
-
-    superclass_input = driver.find_elements(By.XPATH, "//input[@aria-label='Number of Levels of Superclass']")
-    subclass_input = driver.find_elements(By.XPATH, "//input[@aria-label='Number of Levels of Subclass']")
-
-    assert len(superclass_input) > 0, "Superclass level input not found"
-    assert len(subclass_input) > 0, "Subclass level input not found"
-
-    print("Level adjustment inputs found successfully")
