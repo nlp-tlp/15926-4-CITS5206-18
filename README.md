@@ -1,10 +1,10 @@
-# Project Name: Interactive Visualization Tool for ISO 15926-4 Standard
+# Project Name: Interactive Visualization Tool for Equipment Reference Data Libraries - Use case on 15926.org RDLs
 
-This project is an interactive visualization tool for the ISO 15926-4 standard, designed to help users explore complex data relationships using NetworkX and D3.js visualizations. The application is built using Streamlit, providing an intuitive and interactive web interface.
+This project is an interactive visualization tool for the 15926.org RDLs, designed to help users explore complex data relationships using NetworkX and D3.js visualizations. The application is built using Streamlit, providing an intuitive and interactive web interface.
 
 ## Table of Contents
 
-- [Project Name: Interactive Visualization Tool for Equipment Reference Data Libraries - Use case on 15926.org RDLs](#project-name-interactive-visualization-tool-for-iso-15926-4-standard)
+- [Project Name: Interactive Visualization Tool for Equipment Reference Data Libraries](#project-name-interactive-visualization-tool-for-equipment-RDLs)
   - [Table of Contents](#table-of-contents)
   - [Data Retrieval](#data-retrieval)
   - [Installation](#installation)
