@@ -223,6 +223,10 @@ src/
 static/
 └── images/
     └── nlp-tlp-logo.png
+tests/
+└── └── driverpath.py
+    └── test_comp_view.py
+    └── test.py
 requirements.txt                # List of dependencies
 README.md
 ```
