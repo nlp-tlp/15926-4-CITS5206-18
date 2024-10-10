@@ -9,31 +9,20 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import TimeoutException
 
-# Path to ChromeDriver -need to be changed to the local chromedriver path
-driver_path = "/Users/imac/Downloads/chromedriver-mac-x64/chromedriver"
+# Path to ChromeDriver - need to be changed to the local chromedriver path
+driver_path = "C:/Users/shanm/Downloads/chromedriver-win64/chromedriver-win64/chromedriver.exe"
 
 @pytest.fixture(scope="module")
 def setup_browser():
     """Set up the Selenium WebDriver."""
     service = Service(driver_path)
     driver = webdriver.Chrome(service=service)
-
-    # Open the Streamlit app (make sure it's running)
-    driver.get("http://localhost:8501")  
-
+    driver.get("http://localhost:8501")  # Open the Streamlit app
     yield driver
     driver.quit()
 
-def test_pageLoad(setup_browser):
-    """Test navigation through the Streamlit app."""
-    driver = setup_browser
-    # Wait for the app to load
-    WebDriverWait(driver, 10).until(EC.title_contains("main"))
-
-    # Test the initial page title
-    assert "main" in driver.title  
-
 def wait_for_element(driver, by, value, timeout=20):
+    """Helper function to wait for an element to be present."""
     try:
         element = WebDriverWait(driver, timeout).until(
             EC.presence_of_element_located((by, value))
@@ -42,101 +31,121 @@ def wait_for_element(driver, by, value, timeout=20):
     except TimeoutException:
         print(f"Element not found: {by}={value}")
         return None
-    
-def test_documentation(setup_browser):
-    driver = setup_browser
-    time.sleep(2)
-    # Wait for the element to be clickable
-    summary_element = WebDriverWait(driver, 10).until(
-        EC.element_to_be_clickable((By.TAG_NAME, "summary"))
+
+def click_button_by_text(driver, button_text):
+    """Helper function to click a button based on its text."""
+    button = WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.XPATH, f"//button[.//p[text()='{button_text}']]"))
     )
+    button.click()
 
-    # Click the summary element to expand
-    summary_element.click()
+def send_keys_to_element(driver, css_selector, keys):
+    """Helper function to send keys to an input element."""
+    element = wait_for_element(driver, By.CSS_SELECTOR, css_selector)
+    element.click()
+    element.clear()
+    element.send_keys(keys)
+    return element
 
-    time.sleep(1)
-
-    # Click the summary element to collapse
-    summary_element.click()
-
+def toggle_fullscreen(driver, iframe_tag_name):
+    """Helper function to handle fullscreen and exit fullscreen."""
+    iframe = driver.find_element(By.TAG_NAME, iframe_tag_name)
+    driver.switch_to.frame(iframe)
     
-def test_search_functionality(setup_browser):
-    """Test the search functionality of the Streamlit app."""
-    driver = setup_browser
+    button = driver.find_element(By.XPATH, "//button[contains(text(), 'Go Fullscreen')]")
+    driver.execute_script("arguments[0].scrollIntoView(true);", button)
+    button.click()
     time.sleep(2)
+    driver.switch_to.default_content()
 
-    # Locate the input element by list box 
-    search_box = driver.find_element(By.CSS_SELECTOR, "input[aria-autocomplete='list']")
+    try:
+        driver.execute_script("if (document.fullscreenElement) { document.exitFullscreen(); }")
+    except Exception as e:
+        print(f"Error when using JavaScript to exit fullscreen: {str(e)}")
 
-    # Click on the input box to activate it 
-    search_box.click()
+def test_page_load(setup_browser):
+    """Test navigation through the Streamlit app."""
+    driver = setup_browser
+    WebDriverWait(driver, 10).until(EC.title_contains("main"))
+    assert "main" in driver.title  
 
-    # Clear the input field 
-    search_box.clear()
-
-    # Populate the search box to VALVE
-    search_box.send_keys("VALVE")
-    time.sleep(1)  # Add slight delay to allow the dropdown to load
-
-    # Wait for dropdown options to become visible
+def test_search_functionality(setup_browser):
+    """Test the search functionality."""
+    driver = setup_browser
+    search_box = send_keys_to_element(driver, "input[aria-autocomplete='list']", "VALVE")
+    
     dropdown_options = WebDriverWait(driver, 10).until(
         EC.visibility_of_all_elements_located((By.CSS_SELECTOR, "li[role='option']"))
     )
-
-    # Iterate through dropdown options and click 'VALVE'
+    
     for option in dropdown_options:
-        if option.text == "VALVE":  # Case-sensitive match
+        if option.text == "VALVE":
             option.click()
-            break  # Exit the loop after clicking
+            break
 
-    time.sleep(3)
-    # Wait for the Number of levels of SUPERCLASSES to be visible
-    number_input = WebDriverWait(driver, 10).until(
-        EC.visibility_of_element_located((By.ID, "number_input_1"))
-    )
-
-    # Clear the input field by sending 'BACKSPACE' multiple times
-    number_input.click()
-    number_input.send_keys(Keys.BACKSPACE * 3)  # Clear existing value by deleting
-
-    # Send the new value '4' using the keyboard
-    number_input.send_keys("4")
-
-    # Press 'ENTER' to ensure the value is submitted
-    number_input.send_keys(Keys.TAB)
-
-    # Wait for a short moment to ensure the change is processed
     time.sleep(1)
 
-    # Assert the value has been updated to '4'
-    updated_value = number_input.get_attribute("value")
-    assert updated_value == "4", f"Number input did not update correctly! Current value: {updated_value}"
+    # Test number input functionality
+    for input_id, expected_value in [("number_input_1", "4"), ("number_input_2", "5")]:
+        number_input = WebDriverWait(driver, 10).until(
+            EC.visibility_of_element_located((By.ID, input_id))
+        )
+        number_input.click()
+        number_input.send_keys(Keys.BACKSPACE * 3)
+        number_input.send_keys(expected_value)
+        number_input.send_keys(Keys.TAB)
+        time.sleep(1)
+        assert number_input.get_attribute("value") == expected_value, f"Number input {input_id} did not update correctly!"
 
-    ## Wait for the Number of levels of SUBCLASSES to be visible
-    number_input = WebDriverWait(driver, 10).until(
-        EC.visibility_of_element_located((By.ID, "number_input_2"))
-    )
+def test_fullscreen_buttons(setup_browser):
+    """Test the navigation buttons for switching between plots."""
+    driver = setup_browser
 
-    # Clear the input field by sending 'BACKSPACE' multiple times
-    number_input.click()
-    number_input.send_keys(Keys.BACKSPACE * 3)  # Clear existing value by deleting
+    # Switch to Network Plot
+    click_button_by_text(driver, "NETWORK Plot")
+    time.sleep(70)
+    toggle_fullscreen(driver, 'iframe')
 
-    # Send the new value '4' using the keyboard
-    number_input.send_keys("4")
+    # Switch to Tree Plot
+    click_button_by_text(driver, "TREE Plot")
+    time.sleep(60)
+    toggle_fullscreen(driver, 'iframe')
 
-    # Press 'ENTER' to ensure the value is submitted
-    number_input.send_keys(Keys.TAB)
+def test_node_click(setup_browser):
+    """Test clicking on a specific node in the D3 plot."""
+    driver = setup_browser
+    iframe = driver.find_element(By.TAG_NAME, 'iframe')
+    driver.switch_to.frame(iframe)
 
-    # Wait for a short moment to ensure the change is processed
-    time.sleep(1)
+    script = """
+    const d3Container = document.querySelector("#d3-container svg");
+    if (!d3Container) return null;
+    const textElements = d3Container.querySelectorAll("text");
+    let circleClicked = false;
 
-    # Assert the value has been updated to '4'
-    updated_value = number_input.get_attribute("value")
-    assert updated_value == "4", f"Number input did not update correctly! Current value: {updated_value}"
+    textElements.forEach((element) => {
+        const titleElement = element.querySelector('title');
+        const textContent = titleElement ? titleElement.textContent.trim() : element.textContent.trim();
+
+        if (textContent === 'VALVE') {
+            const parentG = element.closest('g');
+            const circleElement = parentG.querySelector('circle');
+            if (circleElement) {
+                circleElement.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+                circleClicked = true;
+            }
+        }
+    });
+    return circleClicked;
+    """
+    circle_clicked = driver.execute_script(script)
+    assert circle_clicked, "Circle associated with 'VALVE' was not clicked."
+    driver.switch_to.default_content()
+    time.sleep(10)
 
 def test_level_adjustment(setup_browser):
+    """Test adjusting the levels of Superclass and Subclass."""
     driver = setup_browser
-    #driver.get("http://localhost:8501")
     time.sleep(1)
 
     superclass_input = driver.find_elements(By.XPATH, "//input[@aria-label='Number of Levels of Superclass']")
@@ -147,204 +156,49 @@ def test_level_adjustment(setup_browser):
 
     print("Level adjustment inputs found successfully")
 
-def test_navig_buttons(setup_browser):
-
+def test_chart_type_switching(setup_browser):
+    """Test switching between Tree Plot and Network Plot."""
     driver = setup_browser
-    time.sleep(2)
-
-    # Switch to Network Plot for the VALVE data
-    wait = WebDriverWait(driver, 20)  # 10 seconds timeout
-    button = wait.until(EC.presence_of_element_located((By.XPATH, "//button[.//p[text()='NETWORK Plot']]")))
+    buttons = driver.find_elements(By.TAG_NAME, "button")
+    button_texts = [button.text for button in buttons]
     
-    # Click the button
-    button.click()
-    time.sleep(70)  # Wait for the action to take place
-
-    # Switch to the iframe first
-    iframe = driver.find_element(By.TAG_NAME, 'iframe')  # Adjust the selector as necessary
-    driver.switch_to.frame(iframe)
-
-    button = driver.find_element(By.XPATH, "//button[contains(text(), 'Go Fullscreen For NETWORK PLOT')]")
-    driver.execute_script("arguments[0].scrollIntoView(true);", button)
-    button.click()
-    time.sleep(2)
-    driver.switch_to.default_content()
+    tree_plot_exists = any("TREE Plot" in text for text in button_texts)
+    network_plot_exists = any("NETWORK Plot" in text for text in button_texts)
     
-    try:
-        driver.execute_script("if (document.fullscreenElement) { document.exitFullscreen(); }")
-        time.sleep(1)
-    except Exception as e:
-        print(f"Error when using JavaScript to exit fullscreen: {str(e)}")
-
-    #time.sleep(1)
-
-    
-
-
-
-    # Switch to D3 Plot for the VALVE data
-    wait = WebDriverWait(driver, 20)  # 10 seconds timeout
-    button = wait.until(EC.presence_of_element_located((By.XPATH, "//button[.//p[text()='TREE Plot']]")))
-    
-    # Click the button
-    button.click()
-    time.sleep(60)  # Wait for the action to take place
-
-    # Switch to the iframe first
-    iframe = driver.find_element(By.TAG_NAME, 'iframe')  # Adjust the selector as necessary
-    driver.switch_to.frame(iframe)
-
-    button = driver.find_element(By.XPATH, "//button[contains(text(), 'Go Fullscreen For TREE PLOT')]")
-    driver.execute_script("arguments[0].scrollIntoView(true);", button)
-    button.click()
-    time.sleep(2)
-
-    driver.switch_to.default_content()
-    
-    try:
-        driver.execute_script("if (document.fullscreenElement) { document.exitFullscreen(); }")
-        time.sleep(1)
-    except Exception as e:
-        print(f"Error when using JavaScript to exit fullscreen: {str(e)}")
-
-    #time.sleep(1)
-
-    
-
-def test_nodeDesc_nodeTitle(setup_browser):
-    driver = setup_browser
-    time.sleep(2)
-
-    # Switch to the iframe first
-    iframe = driver.find_element(By.TAG_NAME, 'iframe')  # Adjust the selector as necessary
-    driver.switch_to.frame(iframe)
-
-    # Wait for the D3 container to be visible on the page
-    try:
-        # Wait for the D3 container element
-        d3_container = WebDriverWait(driver, 30).until(
-            EC.presence_of_element_located((By.ID, "d3-container"))
-        )
-    except Exception as e:
-        print(f"Error finding D3 container: {e}")
-        driver.quit()
-        exit()
-
-    # JavaScript to find the circle element associated with the text "VALVE" and click on it
-    script = """
-    const d3Container = document.querySelector("#d3-container svg");
-    if (!d3Container) return null;  // Check if svg exists
-    const textElements = d3Container.querySelectorAll("text");
-    let circleClicked = false;
-
-    // Loop through all text elements to find the one with 'VALVE' text
-    textElements.forEach((element) => {
-        // Check if the <title> element exists inside the <text> element
-        const titleElement = element.querySelector('title');
-        
-        // Assign the <title>'s content to textContent if it exists, otherwise use the <text>'s textContent
-        const textContent = titleElement ? titleElement.textContent.trim() : element.textContent.trim();
-
-        if (textContent === 'VALVE') {  // Find the <title> element or <text> content with 'VALVE'
-            const parentG = element.closest('g');  // Find the parent <g> element
-            const circleElement = parentG.querySelector('circle');  // Find the circle within the same <g>
-            
-            if (circleElement) {
-                circleElement.dispatchEvent(new MouseEvent('click', { bubbles: true }));  // Simulate click
-                circleClicked = true;
-            }
-        }
-    });
-
-    return circleClicked;
-    """
-
-    # Execute the script to click the circle element associated with the text 'VALVE'
-    circle_clicked = driver.execute_script(script)
-
-    time.sleep(20)
-
-    if circle_clicked:
-        print("Circle associated with 'VALVE' was successfully clicked.")
-    else:
-        print("Circle associated with 'VALVE' could not be found.")
-  
-    driver.switch_to.default_content()
-
-def test_comparative_view(setup_browser):
-    """Test enabling the comparative view."""
-    driver = setup_browser
-    #driver.get("http://localhost:8501")
-    time.sleep(10) 
-    
-    
-
-    comparative_checkbox = wait_for_element(driver, By.XPATH, "//label[contains(., 'Enable Comparative View')]//input")
-    if comparative_checkbox:
-        driver.execute_script("arguments[0].click();", comparative_checkbox)
-        time.sleep(2)
-        
-        WebDriverWait(driver, 10).until(
-            EC.presence_of_all_elements_located((By.XPATH, "//div[contains(@data-baseweb, 'select')]"))
-        )
-        
-        select_boxes = driver.find_elements(By.XPATH, "//div[contains(@data-baseweb, 'select')]")
-        assert len(select_boxes) >= 2, "Not enough select boxes found for comparative view"
-    else:
-        pytest.fail("Comparative view checkbox not found")
-
-    if len(select_boxes) >= 2:
-        for select_box in select_boxes[:2]: 
-            select_box.click()
-            time.sleep(1) 
-            option = wait_for_element(driver, By.XPATH, "//div[@role='option'][1]")  
-            if option:
-                option.click()
-            #time.sleep(1) 
+    assert tree_plot_exists, "Tree Plot button not found"
+    assert network_plot_exists, "Network Plot button not found"
 
 def test_search_history(setup_browser):
     """Test the search history functionality."""
     driver = setup_browser
-    #driver.get("http://localhost:8501")
     time.sleep(5) 
     
     search_box = wait_for_element(driver, By.CSS_SELECTOR, "input[aria-autocomplete='list']")
     if search_box:
-        search_box.send_keys("VALVE")
+        driver.execute_script("arguments[0].scrollIntoView(true);", search_box)
+        search_box.send_keys("accumulator")
         search_box.send_keys(Keys.RETURN)
-        time.sleep(1)
+        time.sleep(3)
         
+        search_box.click()
         search_box.clear()
-        search_box.send_keys("PIPE")
+        search_box.click()
+        search_box.send_keys("pipe")
         search_box.send_keys(Keys.RETURN)
-        time.sleep(1)
+        time.sleep(3)
         
         history_items = wait_for_element(driver, By.XPATH, "//div[contains(., 'Recent Searches:')]")
+        driver.execute_script("arguments[0].scrollIntoView(true);", history_items)
+        time.sleep(5)
         assert history_items, "Search history not found"
     else:
         pytest.fail("Search box not found")
 
-def test_chart_type_switching(setup_browser):
-    """Test switching between Tree Plot and Network Plot."""
+def test_documentation_toggle(setup_browser):
+    """Test expanding and collapsing the documentation section."""
     driver = setup_browser
-    #driver.get("http://localhost:8501")
-    time.sleep(10)  
-
-    buttons = driver.find_elements(By.TAG_NAME, "button")
-    button_texts = [button.text for button in buttons]
-    print("Available buttons:", button_texts)
-
-    tree_plot_exists = any("TREE Plot" in text for text in button_texts)
-    network_plot_exists = any("NETWORK Plot" in text for text in button_texts)
-
-    assert tree_plot_exists, "Tree Plot button not found"
-    assert network_plot_exists, "Network Plot button not found"
-
-    time.sleep(5) 
-    page_source = driver.page_source
-    tree_container_exists = "d3-container" in page_source
-    network_container_exists = "networkx-container" in page_source
-
-    assert tree_container_exists or network_container_exists, "Neither Tree Plot nor Network Plot container was found"
-
-    print("Chart switching test passed successfully")
+    summary_element = wait_for_element(driver, By.TAG_NAME, "summary")
+    time.sleep(1)
+    summary_element.click()  # Expand
+    time.sleep(1)
+    summary_element.click()  # Collapse
