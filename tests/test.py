@@ -8,9 +8,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import TimeoutException
-
-# Path to ChromeDriver - need to be changed to the local chromedriver path
-driver_path = "C:/Users/shanm/Downloads/chromedriver-win64/chromedriver-win64/chromedriver.exe"
+from driverpath import driver_path
 
 @pytest.fixture(scope="module")
 def setup_browser():
