@@ -223,9 +223,9 @@ static/
 └── images/
     └── nlp-tlp-logo.png
 tests/
-└── └── driverpath.py           # 
-    └── test_comp_view.py       # Test the comparative view.
-    └── test.py                 # Test other functions
+├── driverpath.py               # Driver path for testing
+├── test_comp_view.py           # Test the comparative view
+└── test.py                     # Test other functions
 requirements.txt                # List of dependencies
 README.md
 ```

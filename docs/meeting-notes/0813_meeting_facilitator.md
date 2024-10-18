@@ -4,7 +4,7 @@
 | **Date:** | 13/08/24 |
 | **Time:** | 14:00-16:00 |
 | **Place of Meeting:** | [102A] EZONE |
-| **Other Participants** | Jichunyang Liu |
+| **Other Participants** | Jichunyang Li |
 
 **Team Member:**
 
