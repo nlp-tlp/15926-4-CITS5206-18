@@ -4,7 +4,7 @@ This project is an interactive visualization tool for the 15926.org RDLs, design
 
 ## Table of Contents
 
-- [Project Name: Interactive Visualization Tool for Equipment Reference Data Libraries](#project-name-interactive-visualization-tool-for-equipment-RDLs)
+- [Project Name: Interactive Visualization Tool for Equipment Reference Data Libraries - Use case on 15926.org RDLs](#project-name-interactive-visualization-tool-for-equipment-reference-data-libraries---use-case-on-15926org-rdls)
   - [Table of Contents](#table-of-contents)
   - [Data Retrieval](#data-retrieval)
   - [Installation](#installation)
@@ -18,6 +18,7 @@ This project is an interactive visualization tool for the 15926.org RDLs, design
   - [Usage](#usage)
   - [Modules](#modules)
   - [Troubleshooting](#troubleshooting)
+  - [Run Testing Scripts](#run-testing-scripts)
   - [Contributing](#contributing)
   - [Copyright](#copyright)
 
@@ -206,6 +207,7 @@ data/
 ├── filtered_out_data.jason     # Data including invalid nodes
 └── final_output.json           # Data source file
 docs/
+├── demos                       # Previous code
 ├── materials/                  # Unit materials
 └── meeting_minutes/            # Recordings for each meeting.
 scripts/
@@ -216,17 +218,14 @@ src/
 ├── layout.py                   # Functions related to layout and styling
 ├── data_handler.py             # Data loading functions
 ├── networkx_plot.py            # NetworkX plot visualization functions
-├── d3js_plot.py                # D3.js plot visualization functions
-└── templates
-    ├── d3js_template.html      # Tree template
-    └── networkx_template.html  # Network template
+└── d3js_plot.py                # D3.js plot visualization functions
 static/
 └── images/
     └── nlp-tlp-logo.png
 tests/
-└── └── driverpath.py
-    └── test_comp_view.py
-    └── test.py
+└── └── driverpath.py           # 
+    └── test_comp_view.py       # Test the comparative view.
+    └── test.py                 # Test other functions
 requirements.txt                # List of dependencies
 README.md
 ```
@@ -277,6 +276,36 @@ If the app does not run or you encounter issues, please follow these troubleshoo
 3. **Reinstall Dependencies**:
    If any dependency is missing, you can install them individually using `pip install <dependency-name>`.
    
+
+## Run Testing Scripts
+
+Before running the test scripts, please complete the following steps:
+
+1. **Download and Configure Chromedriver:**
+   - Download the appropriate version of [Chromedriver](https://sites.google.com/chromium.org/driver/) based on your Chrome browser version.
+   - Update the `driver_path` variable in `tests/driverpath.py` with the absolute path to the Chromedriver.
+
+   - Example:
+   ```python
+   driver_path = "C:/Users/XXXX/Downloads/chromedriver-win64/chromedriver.exe"
+   ```
+
+2. **Set Application Port:**
+
+   - The application port must be fixed to ensure the tests run correctly.
+   - Use the following command to start the application on a specific port (e.g., 8501):
+  
+   ```bash
+   streamlit run src/main.py --server.port 8501
+   ```
+
+3. **Run the test scripts**
+
+   ```bash
+   pytest tests/test.py
+   pytest tests/test_comp_view.py
+   ```
+
 
 ## Contributing
 
