@@ -4,7 +4,7 @@
 | **Date:** | 20/08/24 |
 | **Time:** | 14:00-16:00 |
 | **Place of Meeting:** | Ezone North [102B] |
-| **Other Participants** | Jichunyang Liu |
+| **Other Participants** | Jichunyang Li |
 
 **Team Member:**
 

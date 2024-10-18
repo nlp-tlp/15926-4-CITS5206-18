@@ -6,7 +6,7 @@
 | Date: | 06/08/24 |
 | Time: | 16:00-18:30 |
 | Place of Meeting: | [202C] EZONE |
-| Other Participants | Jichunyang Liu |
+| Other Participants | Jichunyang Li |
 
 **Team Member:**
 
