@@ -252,6 +252,8 @@ To use the interactive visualization tool:
    - Select two nodes to compare their hierarchical relationships.
    - The nodes are highlighted in the graph for easy comparison.
 
+**DEMO** : https://youtu.be/y0_YqlkHXQc
+
 ## Modules
 
 - **`main.py`**: The entry point of the application that initializes the Streamlit app and coordinates between different modules.
