@@ -78,15 +78,15 @@ unique_names = extract_unique_names(data)
 # Initialize search history
 initialize_search_history()
 
-# Initialize search term in session state if it doesn't exist
-if 'search_term' not in st.session_state:
-    st.session_state.search_term = ""
+# Ensure 'search_term' is initialized in the session state with a valid value
+if 'search_term' not in st.session_state or st.session_state.search_term not in unique_names:
+    st.session_state.search_term = unique_names[0]
 
 # First search bar: Search by unique name with auto-fill
 search_term = st.sidebar.selectbox(
     "Search by Unique Name", 
     unique_names,
-    index=unique_names.index(st.session_state.search_term) if st.session_state.search_term in unique_names else 0,
+    key="search_term",  # This ensures the widget value is stored in st.session_state.search_term
     help="Enter or select a node name to focus on in the visualization."
 )
 
