@@ -78,12 +78,14 @@ To run this project locally, follow these steps:
 
 3. **Install Required Dependencies:**
 
+   *Make sure you have installed Visual Studio c/c++ compiler before running the below commands.*
+
    ```bash
    pip install --upgrade pip
    pip install -r requirements.txt
    ```
 
-4. **Check Installed Dependencies:**
+5. **Check Installed Dependencies:**
 
    Use the provided script to check if all dependencies are installed properly:
 
@@ -91,19 +93,19 @@ To run this project locally, follow these steps:
    python3 scripts/plugin_check.py
    ```
 
-5. **Run the Application:**
+6. **Run the Application:**
 
    ```bash
    streamlit run src/main.py
    ```
 
-6. **Terminate the Application:**
+7. **Terminate the Application:**
 
    ```bash
    Control + C
    ```
 
-7. **Exit the Virtual Environment** (when finished):
+8. **Exit the Virtual Environment** (when finished):
 
    ```bash
    deactivate
