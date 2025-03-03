@@ -46,10 +46,11 @@ python scripts/data_conversion.py
 ```
 
 The script only works when the CSV follows a specific format. The required columns are:
-UniqueName → Becomes uniqueName in JSON
-TextDefinition → Becomes description in JSON
-ISO15926-2Entity and Classification1(to 4) → Combined into types in JSON
-SuperClass1(to 5) → Becomes superclasses in JSON
+
+- UniqueName → Becomes uniqueName in JSON
+- TextDefinition → Becomes description in JSON
+- ISO15926-2Entity and Classification1(to 4) → Combined into types in JSON
+- SuperClass1(to 5) → Becomes superclasses in JSON
 
 This script checks the column names in the CSV file before processing. If there's an issue, an error message will indicate missing column names.
 
