@@ -7,6 +7,7 @@ This project is an interactive visualization tool for the 15926.org RDLs, design
 - [Project Name: Interactive Visualization Tool for Equipment Reference Data Libraries - Use case on 15926.org RDLs](#project-name-interactive-visualization-tool-for-equipment-reference-data-libraries---use-case-on-15926org-rdls)
   - [Table of Contents](#table-of-contents)
   - [Data Retrieval](#data-retrieval)
+  - [Data Conversion](#data-conversion)
   - [Installation](#installation)
     - [Mac/Linux:](#maclinux)
     - [Windows:](#windows)
@@ -29,17 +30,35 @@ To retrieve the latest DATA from the ENDPOINT:
 ```bash
 python3 scripts/data_retrieve.py
 ```
+
 OR
 
 ```bash
 python scripts/data_retrieve.py
 ```
 
+## Data Conversion
+
+This script converts a local CSV file into the desired JSON format. To use it, rename the CSV file as input.csv and place it in the data folder. Please ensure pandas is installed.
+
+```bash
+python scripts/data_conversion.py
+```
+
+The script only works when the CSV follows a specific format. The required columns are:
+UniqueName → Becomes uniqueName in JSON
+TextDefinition → Becomes description in JSON
+ISO15926-2Entity and Classification1(to 4) → Combined into types in JSON
+SuperClass1(to 5) → Becomes superclasses in JSON
+
+This script checks the column names in the CSV file before processing. If there's an issue, an error message will indicate missing column names.
+
 ## Installation
 
 To run this project locally, follow these steps:
 
 ### Mac/Linux:
+
 1. **Clone the Repository:**
 
    ```bash
@@ -90,6 +109,7 @@ To run this project locally, follow these steps:
    ```
 
 ### Windows:
+
 1. **Clone the Repository:**
 
    ```bash
@@ -120,13 +140,13 @@ To run this project locally, follow these steps:
    python scripts/plugin_check.py
    ```
 
-5.	**(Optional) Install Watchdog for Better Performance:**
+5. **(Optional) Install Watchdog for Better Performance:**
    For better performance, it is recommended to install the Watchdog module, which improves file monitoring. This requires the installation of Xcode command line tools (for macOS users):
 
-   ```bash
-   xcode-select --install
-   pip install watchdog
-   ```
+```bash
+xcode-select --install
+pip install watchdog
+```
 
 6. **Run the Application:**
 
@@ -149,6 +169,7 @@ To run this project locally, follow these steps:
 ## Running the Application After Initial Setup
 
 ### Mac/Linux:
+
 1. **Activate the Virtual Environment:**
 
    ```bash
@@ -168,6 +189,7 @@ To run this project locally, follow these steps:
    ```
 
 ### Windows:
+
 1. **Activate the Virtual Environment:**
 
    ```bash
@@ -268,26 +290,25 @@ If the app does not run or you encounter issues, please follow these troubleshoo
 
 1. **Ensure the Virtual Environment is Activated**:
    If the dependencies are not recognized, make sure the virtual environment is activated by using the activation command mentioned above.
-   
 2. **Check for Dependency Issues**:
    Run the plugin check script to verify if all dependencies are installed:
    ```bash
    python3 scripts/plugin_check.py
    ```
-   
 3. **Reinstall Dependencies**:
    If any dependency is missing, you can install them individually using `pip install <dependency-name>`.
-   
 
 ## Run Testing Scripts
 
 Before running the test scripts, please complete the following steps:
 
 1. **Download and Configure Chromedriver:**
+
    - Download the appropriate version of [Chromedriver](https://sites.google.com/chromium.org/driver/) based on your Chrome browser version.
    - Update the `driver_path` variable in `tests/driverpath.py` with the absolute path to the Chromedriver.
 
    - Example:
+
    ```python
    driver_path = "C:/Users/XXXX/Downloads/chromedriver-win64/chromedriver.exe"
    ```
@@ -296,7 +317,7 @@ Before running the test scripts, please complete the following steps:
 
    - The application port must be fixed to ensure the tests run correctly.
    - Use the following command to start the application on a specific port (e.g., 8501):
-  
+
    ```bash
    streamlit run src/main.py --server.port 8501
    ```
@@ -307,7 +328,6 @@ Before running the test scripts, please complete the following steps:
    pytest tests/test.py
    pytest tests/test_comp_view.py
    ```
-
 
 ## Contributing
 
