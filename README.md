@@ -131,11 +131,13 @@ To run this project locally, follow these steps:
 
 3. **Install Required Dependencies:**
 
+   *Make sure you have installed Visual Studio c/c++ compiler before running the below commands.*
+
    ```bash
    pip install -r requirements.txt
    ```
 
-4. **Check Installed Dependencies:**
+5. **Check Installed Dependencies:**
 
    Use the provided script to check if all dependencies are installed properly:
 
@@ -143,7 +145,7 @@ To run this project locally, follow these steps:
    python scripts/plugin_check.py
    ```
 
-5. **(Optional) Install Watchdog for Better Performance:**
+6. **(Optional) Install Watchdog for Better Performance:**
    For better performance, it is recommended to install the Watchdog module, which improves file monitoring. This requires the installation of Xcode command line tools (for macOS users):
 
 ```bash
